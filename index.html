@@ -1,0 +1,612 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>VetDIY — Join the Waitlist</title>
+  <meta name="description" content="Get early access to trusted Veteran pros — or get discovered as a Veteran-owned contractor. Join the VetDIY waitlist before we open city by city." />
+  <meta property="og:title" content="VetDIY — Join the Waitlist" />
+  <meta property="og:description" content="Early access to trusted Veteran pros. Reserve your spot before VetDIY opens in your area." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="assets/bg-homeowner.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <style>
+    :root{
+      --navy:#071222;
+      --navy-2:#0d1b31;
+      --cream:#f7efe0;
+      --tan:#d7b37a;
+      --red:#b8232f;
+      --blue:#1d5c96;
+      --green:#43533f;
+      --white:#fff;
+      --muted:rgba(255,255,255,.72);
+      --card:rgba(9,18,33,.72);
+      --stroke:rgba(255,255,255,.18);
+      --shadow:0 24px 80px rgba(0,0,0,.35);
+      --contractor-photo:url("assets/bg-contractor.jpg");
+      --homeowner-photo:url("assets/bg-homeowner.jpg");
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      min-height:100vh;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color:var(--white);
+      background:#071222;
+      overflow-x:hidden;
+    }
+    .page{
+      position:relative;
+      min-height:100vh;
+      isolation:isolate;
+    }
+    .bg{
+      position:fixed;
+      inset:0;
+      z-index:-3;
+      background:
+        linear-gradient(100deg, rgba(7,18,34,.98) 0%, rgba(7,18,34,.92) 34%, rgba(7,18,34,.58) 58%, rgba(7,18,34,.18) 100%),
+        radial-gradient(circle at 74% 26%, rgba(184,35,47,.24), transparent 34%),
+        var(--homeowner-photo) center center / cover no-repeat;
+      transition: background 850ms ease, filter 850ms ease;
+    }
+    .bg::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      opacity:.28;
+      background-image:
+        linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px),
+        linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px);
+      background-size:58px 58px;
+      mask-image:linear-gradient(90deg,#000 0%, transparent 70%);
+    }
+    .bg::after{
+      content:"";
+      position:absolute;
+      right:5vw;
+      top:13vh;
+      width:min(44vw,560px);
+      height:min(64vh,620px);
+      border-radius:34px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,0) 36%, rgba(7,18,34,.1)),
+        var(--homeowner-photo) center center / cover no-repeat;
+      box-shadow: 0 35px 100px rgba(0,0,0,.45), inset 0 0 0 1px rgba(255,255,255,.24);
+      transform:rotate(1.3deg);
+      transition: all 850ms ease;
+    }
+    body.contractor .bg{
+      background:
+        linear-gradient(102deg, rgba(7,18,34,.99) 0%, rgba(7,18,34,.93) 31%, rgba(7,18,34,.54) 57%, rgba(7,18,34,.2) 100%),
+        radial-gradient(circle at 70% 25%, rgba(184,35,47,.2), transparent 34%),
+        var(--contractor-photo) center center / cover no-repeat;
+    }
+    body.contractor .bg::after{
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,0) 36%, rgba(7,18,34,.1)),
+        var(--contractor-photo) center center / cover no-repeat;
+      transform:rotate(-1.2deg) translateY(8px);
+    }
+    body.customer .bg{
+      background:
+        linear-gradient(100deg, rgba(7,18,34,.98) 0%, rgba(7,18,34,.92) 34%, rgba(7,18,34,.58) 58%, rgba(7,18,34,.18) 100%),
+        radial-gradient(circle at 74% 26%, rgba(29,92,150,.24), transparent 34%),
+        var(--homeowner-photo) center center / cover no-repeat;
+    }
+    body.customer .bg::after{
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.1), rgba(255,255,255,0) 36%, rgba(7,18,34,.08)),
+        var(--homeowner-photo) center center / cover no-repeat;
+      transform:rotate(1.1deg) translateY(-6px);
+    }
+    .topbar{
+      width:min(1180px, calc(100% - 40px));
+      margin:0 auto;
+      padding:28px 0 0;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:18px;
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      font-weight:850;
+      letter-spacing:.3px;
+      font-size:1.15rem;
+    }
+    .mark{
+      width:48px;height:48px;border-radius:0;
+      display:block;
+      flex:0 0 48px;
+      background:url("assets/logo.png") center center / 42px 42px no-repeat;
+      box-shadow:none;
+      position:relative;
+    }
+    .mark:before{
+      content:"";
+    }
+    .top-pill{
+      border:1px solid rgba(255,255,255,.22);
+      background:rgba(255,255,255,.08);
+      backdrop-filter: blur(14px);
+      border-radius:999px;
+      padding:10px 15px;
+      color:rgba(255,255,255,.82);
+      font-size:.9rem;
+      display:flex;gap:8px;align-items:center;
+    }
+    .dot{width:9px;height:9px;border-radius:99px;background:#34d399;box-shadow:0 0 0 7px rgba(52,211,153,.12)}
+    main{
+      width:min(1180px, calc(100% - 40px));
+      margin:0 auto;
+      display:grid;
+      grid-template-columns:minmax(0, 1.05fr) minmax(340px,.72fr);
+      gap:46px;
+      align-items:center;
+      min-height:calc(100vh - 74px);
+      padding:48px 0 80px;
+    }
+    .hero-copy{max-width:720px}
+    .eyebrow{
+      display:inline-flex;align-items:center;gap:10px;
+      padding:9px 12px;
+      border-radius:999px;
+      background:rgba(255,255,255,.09);
+      border:1px solid rgba(255,255,255,.15);
+      color:#f4d8a6;
+      font-weight:750;
+      font-size:.82rem;
+      text-transform:uppercase;
+      letter-spacing:.11em;
+      backdrop-filter:blur(12px);
+    }
+    h1{
+      margin:22px 0 18px;
+      font-size:clamp(3rem, 6vw, 6.6rem);
+      line-height:.9;
+      letter-spacing:-.075em;
+      max-width:850px;
+    }
+    .accent{color:#f0c77f}
+    .subhead{
+      max-width:630px;
+      font-size:clamp(1.05rem, 1.5vw, 1.35rem);
+      line-height:1.55;
+      color:rgba(255,255,255,.78);
+      margin:0 0 30px;
+    }
+    .stats-row{display:flex; gap:16px; flex-wrap:wrap; margin-top:28px}
+    .stat{
+      min-width:160px;
+      padding:18px 18px;
+      border-radius:24px;
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(255,255,255,.08);
+      backdrop-filter: blur(16px);
+    }
+    .stat strong{display:block;font-size:1.5rem;letter-spacing:-.04em}
+    .stat span{display:block;margin-top:5px;color:rgba(255,255,255,.66);font-size:.9rem}
+    .wait-card{
+      position:relative;
+      padding:24px;
+      border-radius:34px;
+      background:linear-gradient(180deg, rgba(255,255,255,.16), rgba(255,255,255,.08));
+      border:1px solid rgba(255,255,255,.24);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(22px);
+      overflow:hidden;
+    }
+    .wait-card::before{
+      content:"";
+      position:absolute; inset:-2px -2px auto -2px; height:5px;
+      background:linear-gradient(90deg,var(--red),var(--tan),var(--blue));
+    }
+    .counter-box{
+      border-radius:28px;
+      padding:20px;
+      background:rgba(5,10,19,.68);
+      border:1px solid rgba(255,255,255,.16);
+      margin-bottom:18px;
+      position:relative;
+      overflow:hidden;
+    }
+    .counter-box::after{
+      content:"";
+      position:absolute; right:-35px; top:-35px; width:120px; height:120px; border-radius:50%;
+      background:rgba(29,92,150,.36);
+      filter:blur(4px)
+    }
+    .live-label{display:flex;align-items:center;justify-content:space-between;gap:12px;color:rgba(255,255,255,.72);font-size:.86rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+    .count{font-size:3rem;line-height:1;font-weight:900;letter-spacing:-.06em;margin-top:10px;font-variant-numeric: tabular-nums;}
+    .count small{font-size:1rem;color:rgba(255,255,255,.62);font-weight:700;letter-spacing:0}
+    .activity{margin-top:10px;color:#f4d8a6;font-size:.92rem;min-height:22px}
+    .selector{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+    .role{
+      appearance:none;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.08);color:#fff;border-radius:18px;padding:14px 12px;font-weight:850;cursor:pointer;text-align:left;transition:.2s ease;
+    }
+    .role span{display:block;color:rgba(255,255,255,.63);font-size:.78rem;font-weight:650;margin-top:3px}
+    .role.active{border-color:rgba(244,216,166,.8);background:rgba(244,216,166,.16);box-shadow:0 0 0 3px rgba(244,216,166,.09)}
+    label{display:block;color:rgba(255,255,255,.75);font-size:.88rem;font-weight:750;margin:12px 0 7px}
+    input, select{
+      width:100%;border:1px solid rgba(255,255,255,.16);border-radius:18px;background:rgba(255,255,255,.1);color:#fff;padding:15px 15px;font-size:1rem;outline:none;transition:.2s ease;
+    }
+    input::placeholder{color:rgba(255,255,255,.45)}
+    input:focus, select:focus{border-color:rgba(244,216,166,.8);box-shadow:0 0 0 3px rgba(244,216,166,.1)}
+    select option{color:#0d1b31}
+    .hidden{display:none!important}
+    .field-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .extend{animation:extend .28s ease both}
+    @keyframes extend{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+    .consent{display:flex;gap:9px;align-items:flex-start;margin:12px 2px 0;color:rgba(255,255,255,.6);font-size:.78rem;font-weight:600;cursor:pointer}
+    .consent input{width:auto;margin-top:2px;flex:0 0 auto}
+    .points-panel{margin-top:14px;padding:14px;border-radius:22px;background:rgba(5,10,19,.42);border:1px solid rgba(255,255,255,.14)}
+    .points-head{display:flex;align-items:center;justify-content:space-between;font-size:.92rem;color:rgba(255,255,255,.78);font-weight:800;margin-bottom:12px}
+    .score{color:#f0c77f;font-size:1.25rem;font-variant-numeric:tabular-nums}
+    .point-list{display:grid;gap:8px}
+    .point-item{display:flex;justify-content:space-between;gap:12px;padding:10px 12px;border-radius:15px;background:rgba(255,255,255,.07);font-size:.9rem;color:rgba(255,255,255,.75)}
+    .point-item b{color:#fff}.point-item em{font-style:normal;color:#9ee7bd;font-weight:900}
+    .cta{
+      width:100%;margin-top:16px;border:none;border-radius:20px;padding:16px 18px;color:#fff;background:linear-gradient(135deg,var(--red),#7f1420);font-weight:900;font-size:1rem;cursor:pointer;box-shadow:0 18px 40px rgba(184,35,47,.32);transition:.2s ease;
+    }
+    .cta:hover{transform:translateY(-1px);box-shadow:0 22px 50px rgba(184,35,47,.42)}
+    .cta:disabled{opacity:.7;cursor:default;transform:none}
+    .fine{margin:12px 2px 0;color:rgba(255,255,255,.55);font-size:.8rem;line-height:1.4}
+    .success{
+      margin-top:16px;padding:16px;border-radius:22px;background:rgba(52,211,153,.12);border:1px solid rgba(52,211,153,.28);color:#dcffe9;display:none;
+    }
+    .success.show{display:block;animation:extend .25s ease both}
+    .share-box{margin-top:12px;padding:12px;border:1px dashed rgba(244,216,166,.45);border-radius:17px;background:rgba(244,216,166,.08)}
+    .share-url{font-size:.82rem;color:#f4d8a6;word-break:break-all;margin-top:7px}
+    .hp{position:absolute;left:-9999px;top:-9999px;width:1px;height:1px;opacity:0;pointer-events:none}
+    @media (max-width: 900px){
+      .topbar{width:min(100% - 28px,1180px);padding-top:18px}
+      .top-pill{display:none}
+      main{width:min(100% - 28px,1180px);grid-template-columns:1fr;gap:26px;padding:36px 0 64px;min-height:auto}
+      .bg::after{opacity:.35;right:-14vw;top:8vh;width:82vw;height:55vh}
+      .wait-card{border-radius:28px;padding:18px}
+      h1{font-size:clamp(3.1rem, 18vw, 5.2rem)}
+      .field-grid{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="bg"></div>
+    <header class="topbar">
+      <div class="brand"><div class="mark"></div><span>VetDIY</span></div>
+      <div class="top-pill"><span class="dot"></span><span>Private launch access is moving fast</span></div>
+    </header>
+
+    <main>
+      <section class="hero-copy">
+        <div class="eyebrow" id="eyebrow">Homeowner early access</div>
+        <h1 id="heroTitle">Get early access before your area <span class="accent">fills up.</span></h1>
+        <p class="subhead" id="heroSub">Join the first wave of homeowners who get priority access to trusted Veteran pros before VetDIY opens city by city.</p>
+        <div class="stats-row">
+          <div class="stat"><strong>+100</strong><span>points per confirmed referral</span></div>
+          <div class="stat"><strong>+50</strong><span>contractor website bonus</span></div>
+          <div class="stat"><strong>48 hrs</strong><span>early contractor profile review</span></div>
+        </div>
+      </section>
+
+      <section class="wait-card" aria-label="Waitlist signup card">
+        <div class="counter-box">
+          <div class="live-label"><span>Live waitlist count</span><span>● updating</span></div>
+          <div class="count"><span id="waitCount">12,344</span> <small>people</small></div>
+          <div class="activity" id="activity">A contractor in Tampa just joined.</div>
+        </div>
+
+        <div class="selector" role="tablist" aria-label="Choose waitlist type">
+          <button class="role" id="customerBtn" type="button">Homeowner <span>I need work done</span></button>
+          <button class="role" id="contractorBtn" type="button">Contractor <span>I want more jobs</span></button>
+        </div>
+
+        <form id="signupForm" autocomplete="on">
+          <!-- honeypot: hidden from humans; bots fill it and get silently dropped -->
+          <input class="hp" id="company_hp" name="company" type="text" tabindex="-1" autocomplete="off" aria-hidden="true" />
+
+          <label for="email">Start with your email</label>
+          <input id="email" name="email" type="email" placeholder="you@example.com" required />
+
+          <div id="stepTwo" class="hidden extend">
+            <label for="phone">Add your phone to move higher</label>
+            <input id="phone" name="phone" type="tel" placeholder="(555) 123-4567" />
+            <label class="consent" for="smsConsent">
+              <input id="smsConsent" type="checkbox" />
+              <span>Text me launch updates &amp; my waitlist position. Msg &amp; data rates may apply; reply STOP to opt out.</span>
+            </label>
+            <div class="points-panel">
+              <div class="points-head"><span>Your priority score</span><span class="score" id="score">+10</span></div>
+              <div class="point-list" id="pointList"></div>
+            </div>
+          </div>
+
+          <div id="contractorFields" class="hidden extend">
+            <div class="field-grid">
+              <div>
+                <label for="website">Website</label>
+                <input id="website" name="website" type="url" placeholder="https://yourbusiness.com" data-points="50" />
+              </div>
+              <div>
+                <label for="facebook">Facebook page</label>
+                <input id="facebook" name="facebook" type="url" placeholder="facebook.com/yourpage" data-points="35" />
+              </div>
+            </div>
+            <label for="services">Primary trade</label>
+            <select id="services" name="services" data-points="25">
+              <option value="">Choose one</option>
+              <option>Handyman</option>
+              <option>Painting</option>
+              <option>Moving help</option>
+              <option>Landscaping</option>
+              <option>Electrical</option>
+              <option>Plumbing</option>
+            </select>
+          </div>
+
+          <div id="customerFields" class="hidden extend">
+            <div class="field-grid">
+              <div>
+                <label for="zip">ZIP code</label>
+                <input id="zip" name="zip" inputmode="numeric" placeholder="33602" data-points="15" />
+              </div>
+              <div>
+                <label for="projectType">First project</label>
+                <select id="projectType" name="projectType" data-points="20">
+                  <option value="">Choose one</option>
+                  <option>Home repair</option>
+                  <option>Painting</option>
+                  <option>Yard work</option>
+                  <option>Moving help</option>
+                  <option>Cleaning</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div id="shareBox" class="share-box hidden">
+            <b>Invite friends to jump the line.</b>
+            <div class="fine">Every confirmed signup through your link adds <b>+100 points</b>.</div>
+            <div class="share-url" id="shareUrl">?ref=YOURCODE</div>
+          </div>
+
+          <button class="cta" type="submit">Join the waitlist</button>
+          <p class="fine">The VetDIY app is coming to iOS and Android to help homeowners find trusted Veteran pros and help contractors get more jobs. Join for early access and launch updates.</p>
+          <div class="success" id="success"></div>
+        </form>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // ── CONFIG ─────────────────────────────────────────────────────────────────────────────────
+    // GO-LIVE: after creating the hosted Supabase project + deploying the functions (see GO-LIVE.md),
+    // paste the project URL and the public anon key below. Until then the page runs in PREVIEW mode
+    // (animated counter + optimistic success, nothing persisted).
+    const CONFIG = {
+      supabaseUrl: "https://YOUR-PROJECT-REF.supabase.co",
+      anonKey: "YOUR-SUPABASE-ANON-KEY",
+    };
+    const CONFIGURED = !/YOUR-/.test(CONFIG.supabaseUrl) && !/YOUR-/.test(CONFIG.anonKey);
+    const FN  = CONFIG.supabaseUrl.replace(/\/$/, "") + "/functions/v1";
+    const RPC = CONFIG.supabaseUrl.replace(/\/$/, "") + "/rest/v1/rpc";
+    const HEADERS = { "Content-Type": "application/json", apikey: CONFIG.anonKey, Authorization: "Bearer " + CONFIG.anonKey };
+
+    const params = new URLSearchParams(location.search);
+    const REF = (params.get("ref") || "").toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 16);
+    const CONFIRM_TOKEN = params.get("confirm") || "";
+    const UTM = {};
+    ["utm_source","utm_medium","utm_campaign","utm_content","utm_term"].forEach(k => { const v = params.get(k); if (v) UTM[k] = v.slice(0,120); });
+    const SITE = location.origin + location.pathname.replace(/index\.html$/, "");
+
+    const $ = (id) => document.getElementById(id);
+    const body = document.body;
+    const customerBtn=$("customerBtn"), contractorBtn=$("contractorBtn"), email=$("email"), phone=$("phone"),
+      stepTwo=$("stepTwo"), contractorFields=$("contractorFields"), customerFields=$("customerFields"),
+      pointList=$("pointList"), scoreEl=$("score"), waitCountEl=$("waitCount"), activityEl=$("activity"),
+      signupForm=$("signupForm"), success=$("success"), shareBox=$("shareBox"), shareUrl=$("shareUrl"),
+      eyebrow=$("eyebrow"), heroTitle=$("heroTitle"), heroSub=$("heroSub");
+
+    let role = null, displayCount = 12344, points = 10, myReferralCode = null, submitting = false;
+
+    const activities = [
+      'A homeowner in Austin just joined.',
+      'A contractor in Tampa just added a website.',
+      '3 people moved up with referrals.',
+      'A veteran painter in Phoenix just claimed a spot.',
+      'A homeowner in Charlotte just verified a phone number.',
+      'Someone just shared their invite link.',
+      'A contractor in Dallas just uploaded business info.'
+    ];
+
+    function selectRole(nextRole){
+      role = nextRole;
+      body.classList.remove('customer','contractor');
+      body.classList.add(nextRole);
+      customerBtn.classList.toggle('active', nextRole === 'customer');
+      contractorBtn.classList.toggle('active', nextRole === 'contractor');
+      contractorFields.classList.toggle('hidden', nextRole !== 'contractor' || stepTwo.classList.contains('hidden'));
+      customerFields.classList.toggle('hidden', nextRole !== 'customer' || stepTwo.classList.contains('hidden'));
+      if(nextRole === 'contractor'){
+        eyebrow.textContent = 'Contractor mode';
+        heroTitle.innerHTML = 'Join the VetDIY <span class="accent">waitlist early.</span>';
+        heroSub.textContent = 'Get discovered by homeowners who value Veteran-owned service. Build your profile now, earn points, and move up before launch.';
+      } else {
+        eyebrow.textContent = 'Homeowner mode';
+        heroTitle.innerHTML = 'Get first access to trusted <span class="accent">Veteran pros.</span>';
+        heroSub.textContent = 'Reserve your spot before VetDIY opens in your area. Add project details, invite friends, and move higher on the list.';
+      }
+      renderPoints();
+    }
+
+    function revealStepTwo(){
+      if(stepTwo.classList.contains('hidden')){
+        stepTwo.classList.remove('hidden');
+        if(role === 'contractor') contractorFields.classList.remove('hidden');
+        if(role === 'customer') customerFields.classList.remove('hidden');
+        shareBox.classList.remove('hidden');
+      }
+      renderPoints();
+    }
+
+    function calcPoints(){
+      let total = email.value ? 10 : 0;
+      if(phone.value) total += 25;
+      if(role === 'contractor'){
+        if($('website').value) total += 50;
+        if($('facebook').value) total += 35;
+        if($('services').value) total += 25;
+      }
+      if(role === 'customer'){
+        if($('zip').value) total += 15;
+        if($('projectType').value) total += 20;
+      }
+      return total;
+    }
+
+    function renderPoints(){
+      points = calcPoints();
+      scoreEl.textContent = `+${points}`;
+      const rows = [];
+      if(email.value) rows.push(['Email reserved', '+10']);
+      rows.push([phone.value ? 'Phone added' : 'Add phone number', phone.value ? '+25' : '+25 available']);
+      if(role === 'contractor'){
+        rows.push([$('website').value ? 'Website added' : 'Add website', '+50']);
+        rows.push([$('facebook').value ? 'Facebook page added' : 'Add Facebook page', '+35']);
+        rows.push([$('services').value ? 'Trade selected' : 'Choose your trade', '+25']);
+      }
+      if(role === 'customer'){
+        rows.push([$('zip').value ? 'ZIP added' : 'Add ZIP code', '+15']);
+        rows.push([$('projectType').value ? 'Project type added' : 'Choose project type', '+20']);
+      }
+      rows.push(['Each confirmed referral', '+100']);
+      pointList.innerHTML = rows.map(([name, value]) => `<div class="point-item"><b>${name}</b><em>${value}</em></div>`).join('');
+    }
+
+    // ── live counter (monotonic; server-authoritative when configured) ───────────────────────────
+    function setCount(n){
+      if (typeof n === 'number' && n > displayCount){ displayCount = n; waitCountEl.textContent = displayCount.toLocaleString(); }
+    }
+    async function tickServer(){
+      try{
+        const r = await fetch(RPC + "/waitlist_tick", { method:"POST", headers: HEADERS, body: "{}" });
+        if(r.ok){ const n = await r.json(); setCount(typeof n === 'number' ? n : (n && n.waitlist_tick)); }
+      }catch(_){ /* keep last value; never go backward */ }
+    }
+    function scheduleCounter(){
+      const delay = Math.floor(1700 + Math.random() * 5600);
+      setTimeout(() => {
+        if (CONFIGURED) { tickServer(); }
+        else {
+          const spike = Math.random() > .86;
+          setCount(displayCount + (spike ? Math.ceil(4 + Math.random() * 9) : Math.ceil(Math.random() * 3)));
+        }
+        activityEl.textContent = activities[Math.floor(Math.random() * activities.length)];
+        scheduleCounter();
+      }, delay);
+    }
+
+    // ── share link ───────────────────────────────────────────────────────────────────────────────
+    function previewCode(){
+      if (myReferralCode) return myReferralCode;
+      return (email.value ? (email.value.split('@')[0] || '').replace(/[^a-z0-9]/gi,'').slice(0,7).toUpperCase() : '') || 'YOURCODE';
+    }
+    function updateShare(){ shareUrl.textContent = `${SITE}?ref=${previewCode()}`; }
+
+    // ── submit ─────────────────────────────────────────────────────────────────────────────────
+    function collectPayload(){
+      const p = {
+        email: email.value.trim(),
+        role,
+        phone: phone.value.trim() || null,
+        sms_consent: !!$("smsConsent").checked,
+        ref: REF || null,
+        source: "waitlist-landing",
+        utm: Object.keys(UTM).length ? UTM : null,
+        hp: $("company_hp").value || ""
+      };
+      if (role === "contractor"){ p.website=$("website").value.trim()||null; p.facebook=$("facebook").value.trim()||null; p.trade=$("services").value||null; }
+      else { p.zip=$("zip").value.trim()||null; p.project_type=$("projectType").value||null; }
+      return p;
+    }
+    function showSuccess(position, code, extra){
+      const where = role === "contractor" ? "contractor" : "homeowner";
+      myReferralCode = code || myReferralCode;
+      const share = `${SITE}?ref=${myReferralCode || ''}`;
+      success.classList.add("show");
+      success.innerHTML =
+        `<b>You're on the ${where} waitlist.</b><br/>` +
+        (position ? `Your position: <b>#${Number(position).toLocaleString()}</b>. ` : "") +
+        `Check your email to confirm your spot.` +
+        (myReferralCode ? `<div class="fine" style="margin-top:8px">Your invite link (+100 pts per confirmed friend):</div><div class="share-url">${share}</div>` : "") +
+        (extra || "");
+      if (myReferralCode){ shareBox.classList.remove("hidden"); shareUrl.textContent = share; }
+    }
+    async function submitReal(){
+      const r = await fetch(FN + "/waitlist-submit", { method:"POST", headers: HEADERS, body: JSON.stringify(collectPayload()) });
+      const d = await r.json().catch(() => ({}));
+      if (!r.ok || d.error) throw new Error(d.error || ("HTTP " + r.status));
+      if (typeof d.display_count === "number") setCount(d.display_count);
+      showSuccess(d.position, d.referral_code);
+    }
+    function submitDemo(){
+      const position = Math.max(1, displayCount - Math.floor(points * 4.7) - Math.floor(Math.random() * 35));
+      showSuccess(position, previewCode(), `<div class="fine" style="margin-top:8px;color:rgba(255,255,255,.45)">Preview mode — connect Supabase to go live.</div>`);
+    }
+
+    // ── confirm landing (?confirm=TOKEN) ─────────────────────────────────────────────────────────
+    async function handleConfirm(){
+      if (!CONFIRM_TOKEN) return;
+      success.classList.add("show");
+      success.innerHTML = "<b>Confirming your spot…</b>";
+      if (!CONFIGURED){ success.innerHTML = "<b>Preview mode.</b><br/>Connect Supabase to confirm real signups."; return; }
+      try{
+        const r = await fetch(FN + "/waitlist-confirm?token=" + encodeURIComponent(CONFIRM_TOKEN), { headers: HEADERS });
+        const d = await r.json().catch(() => ({}));
+        if (d.ok){
+          const share = `${SITE}?ref=${d.referral_code}`;
+          if (typeof d.display_count === "number") setCount(d.display_count);
+          success.innerHTML = `<b>You're confirmed 🎖️</b><br/>` +
+            (d.position ? `Position: <b>#${Number(d.position).toLocaleString()}</b>. ` : "") +
+            `We'll email you when VetDIY opens in your area.` +
+            `<div class="fine" style="margin-top:8px">Share to move up:</div><div class="share-url">${share}</div>`;
+        } else {
+          success.innerHTML = "<b>That confirmation link is invalid or expired.</b>";
+        }
+      }catch(_){ success.innerHTML = "<b>Couldn't confirm right now.</b> Please try again in a moment."; }
+    }
+
+    // ── listeners ────────────────────────────────────────────────────────────────────────────────
+    customerBtn.addEventListener('click', () => selectRole('customer'));
+    contractorBtn.addEventListener('click', () => selectRole('contractor'));
+    email.addEventListener('input', () => { if(email.value.includes('@')) revealStepTwo(); updateShare(); renderPoints(); });
+    signupForm.addEventListener('input', renderPoints);
+    signupForm.addEventListener('change', renderPoints);
+    signupForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      if(!role){
+        success.classList.add('show');
+        success.innerHTML = '<b>Choose Homeowner or Contractor first.</b><br/>That lets us place you into the right launch queue.';
+        return;
+      }
+      if (submitting) return;
+      submitting = true;
+      const btn = signupForm.querySelector('.cta'); const label = btn.textContent;
+      btn.disabled = true; btn.textContent = 'Joining…';
+      try { if (CONFIGURED) await submitReal(); else submitDemo(); }
+      catch(err){ success.classList.add('show'); success.innerHTML = `<b>Something went wrong.</b><br/>${err.message || 'Please try again.'}`; }
+      finally { submitting = false; btn.disabled = false; btn.textContent = label; }
+    });
+
+    // ── init ───────────────────────────────────────────────────────────────────────────────────
+    selectRole('customer');
+    updateShare();
+    scheduleCounter();
+    handleConfirm();
+  </script>
+</body>
+</html>
