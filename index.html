@@ -257,10 +257,38 @@
       .topbar{width:min(100% - 28px,1180px);padding-top:18px}
       .top-pill{display:none}
       main{width:min(100% - 28px,1180px);grid-template-columns:1fr;gap:26px;padding:36px 0 64px;min-height:auto}
-      .bg::after{opacity:.35;right:-14vw;top:8vh;width:82vw;height:55vh}
-      .wait-card{border-radius:28px;padding:18px}
-      h1{font-size:clamp(3.1rem, 18vw, 5.2rem)}
+      .bg{
+        position:absolute;
+        min-height:100%;
+        background:
+          linear-gradient(180deg, rgba(7,18,34,.70) 0%, rgba(7,18,34,.86) 48%, #071222 100%),
+          linear-gradient(90deg, rgba(7,18,34,.96) 0%, rgba(7,18,34,.60) 54%, rgba(7,18,34,.34) 100%),
+          var(--homeowner-photo) center top / cover no-repeat;
+      }
+      .bg::before{opacity:.18;mask-image:linear-gradient(180deg,#000 0%, transparent 74%)}
+      .bg::after{display:none}
+      body.contractor .bg{
+        background:
+          linear-gradient(180deg, rgba(7,18,34,.70) 0%, rgba(7,18,34,.86) 48%, #071222 100%),
+          linear-gradient(90deg, rgba(7,18,34,.96) 0%, rgba(7,18,34,.60) 54%, rgba(7,18,34,.34) 100%),
+          var(--contractor-photo) center top / cover no-repeat;
+      }
+      body.customer .bg{
+        background:
+          linear-gradient(180deg, rgba(7,18,34,.70) 0%, rgba(7,18,34,.86) 48%, #071222 100%),
+          linear-gradient(90deg, rgba(7,18,34,.96) 0%, rgba(7,18,34,.60) 54%, rgba(7,18,34,.34) 100%),
+          var(--homeowner-photo) center top / cover no-repeat;
+      }
+      .wait-card{border-radius:28px;padding:18px;background:linear-gradient(180deg, rgba(255,255,255,.18), rgba(12,22,38,.82));backdrop-filter: blur(18px)}
+      h1{font-size:5.2rem}
       .field-grid{grid-template-columns:1fr}
+    }
+    @media (max-width: 520px){
+      h1{font-size:4.25rem}
+      .stat{min-width:min(100%,220px)}
+    }
+    @media (max-width: 380px){
+      h1{font-size:3.85rem}
     }
   </style>
 </head>

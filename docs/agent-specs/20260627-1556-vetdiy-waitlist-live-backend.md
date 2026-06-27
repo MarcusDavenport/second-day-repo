@@ -110,3 +110,13 @@ Before saying the implementation is complete for this pass:
 - Will GitHub Pages serve PNG assets at acceptable load speed, or should they be optimized after functional proof?
 - Does replacing the bad page remove any field the backend expects? It should not; optional fields are preserved or mapped.
 - Does the confirmation email link use the correct deployed `WAITLIST_SITE_URL` once functions are hosted?
+
+## Mobile follow-up: duplicate hero image
+
+On 2026-06-27 Marcus reported that mobile/tablet widths show a bad "double look" where the same role image appears as both the page background and a translucent foreground panel. Evidence screenshot: `/Users/mineallmine/Desktop/Screenshot 2026-06-27 at 6.35.53 PM.png` at 822x870.
+
+Mobile success criteria:
+- At widths under the existing `900px` breakpoint, render one coherent hero image treatment, not a second `.bg::after` photo panel.
+- Keep desktop `>900px` hero composition unchanged.
+- Preserve the active design copy, role toggles, waitlist form, preview/backend wiring, and assets.
+- Verify at 822x870 and phone width with no horizontal overflow, clean console, and no page errors.
