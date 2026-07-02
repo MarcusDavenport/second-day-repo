@@ -282,6 +282,12 @@
       .wait-card{border-radius:28px;padding:18px;background:linear-gradient(180deg, rgba(255,255,255,.18), rgba(12,22,38,.82));backdrop-filter: blur(18px)}
       h1{font-size:5.2rem}
       .field-grid{grid-template-columns:1fr}
+      /* Mobile: put the points breakdown BELOW the Join button */
+      #signupForm{display:flex;flex-direction:column}
+      #signupForm > .cta{order:1}
+      #signupForm > #success{order:2}
+      #signupForm > #pointsPanel{order:3;margin-top:16px}
+      #signupForm > .fine{order:4}
     }
     @media (max-width: 520px){
       h1{font-size:4.25rem}
@@ -333,21 +339,24 @@
           <div id="stepTwo" class="hidden extend">
             <label for="phone">Add your phone to move higher</label>
             <input id="phone" name="phone" type="tel" placeholder="(555) 123-4567" />
-            <div class="points-panel">
-              <div class="points-head"><span>Your priority score</span><span class="score" id="score">+10</span></div>
-              <div class="point-list" id="pointList"></div>
-            </div>
+          </div>
+
+          <div class="points-panel hidden extend" id="pointsPanel">
+            <div class="points-head"><span>Your priority score</span><span class="score" id="score">+10</span></div>
+            <div class="point-list" id="pointList"></div>
           </div>
 
           <div id="contractorFields" class="hidden extend">
+            <label for="businessName">Business name</label>
+            <input id="businessName" name="businessName" type="text" placeholder="Your Business LLC" data-points="20" />
             <div class="field-grid">
               <div>
                 <label for="website">Website</label>
-                <input id="website" name="website" type="url" placeholder="https://yourbusiness.com" data-points="50" />
+                <input id="website" name="website" type="text" inputmode="url" placeholder="www.yourbusiness.com" data-points="50" />
               </div>
               <div>
                 <label for="facebook">Facebook page</label>
-                <input id="facebook" name="facebook" type="url" placeholder="facebook.com/yourpage" data-points="35" />
+                <input id="facebook" name="facebook" type="text" inputmode="url" placeholder="facebook.com/yourpage" data-points="35" />
               </div>
             </div>
             <label for="services">Primary trade</label>
@@ -380,6 +389,8 @@
                 </select>
               </div>
             </div>
+            <label for="projectNotes">Project details (optional)</label>
+            <input id="projectNotes" name="projectNotes" type="text" placeholder="Tell us the job you need done" data-points="10" />
           </div>
 
           <div id="shareBox" class="share-box hidden">
@@ -403,6 +414,7 @@
     const email = document.getElementById('email');
     const phone = document.getElementById('phone');
     const stepTwo = document.getElementById('stepTwo');
+    const pointsPanel = document.getElementById('pointsPanel');
     const contractorFields = document.getElementById('contractorFields');
     const customerFields = document.getElementById('customerFields');
     const pointList = document.getElementById('pointList');
@@ -479,6 +491,7 @@
     function revealStepTwo(){
       if(stepTwo.classList.contains('hidden')){
         stepTwo.classList.remove('hidden');
+        pointsPanel.classList.remove('hidden');
         if(role === 'contractor') contractorFields.classList.remove('hidden');
         if(role === 'customer') customerFields.classList.remove('hidden');
         shareBox.classList.remove('hidden');
@@ -498,6 +511,7 @@
       let total = hasEmail() ? 10 : 0;
       if(phone.value) total += 25;
       if(role === 'contractor'){
+        if(document.getElementById('businessName').value) total += 20;
         if(document.getElementById('website').value) total += 50;
         if(document.getElementById('facebook').value) total += 35;
         if(document.getElementById('services').value) total += 25;
@@ -505,6 +519,7 @@
       if(role === 'customer'){
         if(document.getElementById('zip').value) total += 15;
         if(document.getElementById('projectType').value) total += 20;
+        if(document.getElementById('projectNotes').value) total += 10;
       }
       return total;
     }
@@ -516,6 +531,7 @@
       if(hasEmail()) rows.push(['Email reserved', '+10']);
       rows.push([phone.value ? 'Phone added' : 'Add phone number', phone.value ? '+25' : '+25 available']);
       if(role === 'contractor'){
+        rows.push([document.getElementById('businessName').value ? 'Business name added' : 'Add business name', '+20']);
         rows.push([document.getElementById('website').value ? 'Website added' : 'Add website', '+50']);
         rows.push([document.getElementById('facebook').value ? 'Facebook page added' : 'Add Facebook page', '+35']);
         rows.push([document.getElementById('services').value ? 'Trade selected' : 'Choose your trade', '+25']);
@@ -523,6 +539,7 @@
       if(role === 'customer'){
         rows.push([document.getElementById('zip').value ? 'ZIP added' : 'Add ZIP code', '+15']);
         rows.push([document.getElementById('projectType').value ? 'Project type added' : 'Choose project type', '+20']);
+        rows.push([document.getElementById('projectNotes').value ? 'Project details added' : 'Add project details', '+10']);
       }
       rows.push(['Each confirmed referral', '+100']);
       pointList.innerHTML = rows.map(([name, value]) => `<div class="point-item"><b>${name}</b><em>${value}</em></div>`).join('');
@@ -572,6 +589,12 @@
       shareUrl.textContent = SITE + '?ref=' + code;
     }
 
+    function normalizeUrl(value){
+      const v = (value || '').trim();
+      if(!v) return null;
+      return /^https?:\/\//i.test(v) ? v : 'https://' + v.replace(/^\/+/, '');
+    }
+
     function collectPayload(){
       const payload = {
         email: email.value.trim(),
@@ -584,12 +607,14 @@
       };
 
       if(role === 'contractor'){
-        payload.website = document.getElementById('website').value.trim() || null;
-        payload.facebook = document.getElementById('facebook').value.trim() || null;
+        payload.business_name = document.getElementById('businessName').value.trim() || null;
+        payload.website = normalizeUrl(document.getElementById('website').value);
+        payload.facebook = normalizeUrl(document.getElementById('facebook').value);
         payload.trade = document.getElementById('services').value.trim() || null;
       } else {
         payload.zip = document.getElementById('zip').value.trim() || null;
         payload.project_type = document.getElementById('projectType').value.trim() || null;
+        payload.project_notes = document.getElementById('projectNotes').value.trim() || null;
       }
 
       return payload;
