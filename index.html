@@ -253,6 +253,17 @@
     .success.show{display:block;animation:extend .25s ease both}
     .share-box{margin-top:12px;padding:12px;border:1px dashed rgba(244,216,166,.45);border-radius:17px;background:rgba(244,216,166,.08)}
     .share-url{font-size:.82rem;color:#f4d8a6;word-break:break-all;margin-top:7px}
+    .resume-banner{margin-bottom:14px;padding:14px 16px;border-radius:18px;background:rgba(67,211,153,.14);border:1px solid rgba(67,211,153,.32);color:#dcffe9;font-size:.94rem;line-height:1.5}
+    .resume-banner b{color:#fff}
+    .resume-banner .rp{color:#9ee7bd;font-weight:900}
+    .invite-box{margin-top:16px;padding:16px;border-radius:22px;background:rgba(244,216,166,.09);border:1px solid rgba(244,216,166,.3)}
+    .invite-box h4{margin:0 0 4px;font-size:1.02rem;color:#fff}
+    .invite-box .sub{color:rgba(255,255,255,.68);font-size:.85rem;margin-bottom:12px}
+    .invite-box .sub em{color:#9ee7bd;font-style:normal;font-weight:800}
+    .invite-row{margin-bottom:8px}
+    .cta-secondary{width:100%;margin-top:6px;border:none;border-radius:16px;padding:13px 16px;color:#0d1b31;background:linear-gradient(135deg,#f0c77f,#d7b37a);font-weight:900;font-size:.95rem;cursor:pointer}
+    .cta-secondary:disabled{opacity:.6;cursor:default}
+    .invite-result{margin-top:9px;font-size:.83rem;color:#9ee7bd;min-height:16px}
     @media (max-width: 900px){
       .topbar{width:min(100% - 28px,1180px);padding-top:18px}
       .top-pill{display:none}
@@ -282,12 +293,6 @@
       .wait-card{border-radius:28px;padding:18px;background:linear-gradient(180deg, rgba(255,255,255,.18), rgba(12,22,38,.82));backdrop-filter: blur(18px)}
       h1{font-size:5.2rem}
       .field-grid{grid-template-columns:1fr}
-      /* Mobile: put the points breakdown BELOW the Join button */
-      #signupForm{display:flex;flex-direction:column}
-      #signupForm > .cta{order:1}
-      #signupForm > #success{order:2}
-      #signupForm > #pointsPanel{order:3;margin-top:16px}
-      #signupForm > .fine{order:4}
     }
     @media (max-width: 520px){
       h1{font-size:4.25rem}
@@ -325,6 +330,8 @@
           <div class="activity" id="activity">A contractor in Tampa just joined.</div>
         </div>
 
+        <div class="resume-banner hidden" id="resumeBanner"></div>
+
         <div class="selector" role="tablist" aria-label="Choose waitlist type">
           <button class="role" id="customerBtn" type="button">Homeowner <span>I need work done</span></button>
           <button class="role" id="contractorBtn" type="button">Contractor <span>I want more jobs</span></button>
@@ -339,11 +346,6 @@
           <div id="stepTwo" class="hidden extend">
             <label for="phone">Add your phone to move higher</label>
             <input id="phone" name="phone" type="tel" placeholder="(555) 123-4567" />
-          </div>
-
-          <div class="points-panel hidden extend" id="pointsPanel">
-            <div class="points-head"><span>Your priority score</span><span class="score" id="score">+10</span></div>
-            <div class="point-list" id="pointList"></div>
           </div>
 
           <div id="contractorFields" class="hidden extend">
@@ -400,8 +402,23 @@
           </div>
 
           <button class="cta" type="submit">Join the waitlist</button>
-          <p class="fine">The VetDIY app is coming to iOS and Android to help homeowners find trusted Veteran pros and help contractors get more jobs. Join for early access and launch updates.</p>
+
+          <div class="points-panel hidden extend" id="pointsPanel">
+            <div class="points-head"><span>Your priority score</span><span class="score" id="score">+10</span></div>
+            <div class="point-list" id="pointList"></div>
+          </div>
+
           <div class="success" id="success"></div>
+
+          <div class="invite-box hidden" id="inviteBox">
+            <h4>Invite friends to jump the line</h4>
+            <div class="sub">Each friend who joins &amp; confirms earns you <em>+100</em> — you both move up.</div>
+            <div id="inviteFields"></div>
+            <button type="button" class="cta-secondary" id="sendInvitesBtn">Send invites</button>
+            <div class="invite-result" id="inviteResult"></div>
+          </div>
+
+          <p class="fine">We'll only use your info to email you about VetDIY's launch — no spam, unsubscribe anytime. The VetDIY app is coming to iOS and Android for homeowners and Veteran contractors.</p>
         </form>
       </section>
     </main>
@@ -452,7 +469,7 @@
       : location.origin + location.pathname.replace(/index\.html$/, '');
 
     let role = null;
-    let waitCount = 12344;
+    let waitCount = Number(localStorage.getItem('vetdiy_wl_count')) || 12344;
     let points = 10;
     let referralCode = null;
     let submitting = false;
@@ -541,6 +558,7 @@
         rows.push([document.getElementById('projectType').value ? 'Project type added' : 'Choose project type', '+20']);
         rows.push([document.getElementById('projectNotes').value ? 'Project details added' : 'Add project details', '+10']);
       }
+      rows.push(['Confirm your email', '+200']);
       rows.push(['Each confirmed referral', '+100']);
       pointList.innerHTML = rows.map(([name, value]) => `<div class="point-item"><b>${name}</b><em>${value}</em></div>`).join('');
     }
@@ -549,7 +567,19 @@
       if(typeof nextCount === 'number' && nextCount > waitCount){
         waitCount = nextCount;
         waitCountEl.textContent = waitCount.toLocaleString();
+        try{ localStorage.setItem('vetdiy_wl_count', String(waitCount)); }catch(_e){}
       }
+    }
+
+    // Show the last-seen count instantly (no reset flash on refresh), then sync the real
+    // server value. The server counter is monotonic, so it only ever moves forward.
+    async function primeCount(){
+      waitCountEl.textContent = waitCount.toLocaleString();
+      if(!CONFIGURED) return;
+      try{
+        const r = await fetch(RPC + '/waitlist_display_count', { method:'POST', headers:HEADERS, body:'{}' });
+        if(r.ok){ const d = await r.json(); setCount(typeof d === 'number' ? d : (d && d.waitlist_display_count)); }
+      }catch(_e){}
     }
 
     async function tickServer(){
@@ -631,7 +661,7 @@
       const label = backendRole() === 'contractor' ? 'contractor' : 'homeowner';
       return `<b>You’re on the ${label} waitlist.</b><br/>` +
         (position ? `Estimated position: <b>#${Number(position).toLocaleString()}</b>. ` : '') +
-        `Check your email to confirm your spot.` +
+        `Check your email to confirm your spot — <b>+200 points</b>.` +
         (referralCode ? `<br/><span>Your invite link: ${shareUrl.textContent}</span>` : '') +
         (preview ? '<br/><span>Preview mode - connect Supabase to persist real signups.</span>' : '');
     }
@@ -641,12 +671,16 @@
       const data = await response.json().catch(() => ({}));
       if(!response.ok || data.error) throw new Error(data.error || ('HTTP ' + response.status));
       if(typeof data.display_count === 'number') setCount(data.display_count);
+      referralCode = data.referral_code || referralCode;
+      try{ localStorage.setItem('vetdiy_wl', JSON.stringify({ code: referralCode, role: backendRole() })); }catch(_e){}
       showSuccess(successHtml(data.position, data.referral_code, false));
+      showInvite();
     }
 
     function submitPreview(){
       const position = Math.max(1, waitCount - Math.floor(points * 4.7) - Math.floor(Math.random() * 35));
       showSuccess(successHtml(position, cleanCode(email.value.trim()), true));
+      showInvite();
     }
 
     async function handleConfirm(){
@@ -664,13 +698,88 @@
         if(typeof data.display_count === 'number') setCount(data.display_count);
         referralCode = data.referral_code || referralCode;
         updateShareUrl();
-        showSuccess(`<b>You’re confirmed.</b><br/>` +
+        try{ localStorage.setItem('vetdiy_wl', JSON.stringify({ code: referralCode, role: backendRole() })); }catch(_e){}
+        showSuccess(`<b>You’re confirmed 🎖️ +200 points.</b><br/>` +
           (data.position ? `Position: <b>#${Number(data.position).toLocaleString()}</b>. ` : '') +
           `We’ll email you when VetDIY opens in your area.<br/><span>Share: ${shareUrl.textContent}</span>`);
+        showInvite();
       }catch(_error){
         showSuccess('<b>That confirmation link is invalid or expired.</b>');
       }
     }
+
+    // ── invites + returning-visitor resume ──────────────────────────────
+    const inviteBox = document.getElementById('inviteBox');
+    const inviteFields = document.getElementById('inviteFields');
+    const inviteResult = document.getElementById('inviteResult');
+    const sendInvitesBtn = document.getElementById('sendInvitesBtn');
+    const resumeBanner = document.getElementById('resumeBanner');
+    const INVITE_CAP = 20;
+
+    function inviteInputs(){ return Array.from(inviteFields.querySelectorAll('input')); }
+
+    function addInviteField(){
+      if(inviteInputs().length >= INVITE_CAP) return;
+      const row = document.createElement('div');
+      row.className = 'invite-row';
+      const inp = document.createElement('input');
+      inp.type = 'email'; inp.placeholder = 'friend@email.com';
+      row.appendChild(inp); inviteFields.appendChild(row);
+      inp.addEventListener('input', () => {
+        const all = inviteInputs();
+        if(inp.value.trim() && all[all.length - 1] === inp && all.length < INVITE_CAP) addInviteField();
+      });
+    }
+
+    function showInvite(){
+      if(!inviteBox.classList.contains('hidden')) return;
+      inviteBox.classList.remove('hidden');
+      inviteFields.innerHTML = '';
+      for(let i = 0; i < 3; i++) addInviteField();   // start with 3; grows as you fill the last one
+    }
+
+    async function sendInvites(){
+      if(!referralCode) return;
+      const valid = v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+      const emails = inviteInputs().map(i => i.value.trim()).filter(v => v && valid(v));
+      if(!emails.length){ inviteResult.textContent = "Add at least one friend's email."; return; }
+      sendInvitesBtn.disabled = true; sendInvitesBtn.textContent = 'Sending…';
+      try{
+        const r = await fetch(FN + '/waitlist-invite', { method:'POST', headers:HEADERS, body: JSON.stringify({ code: referralCode, emails }) });
+        const d = await r.json().catch(() => ({}));
+        if(!r.ok || d.error) throw new Error(d.error || ('HTTP ' + r.status));
+        const sent = (d.results || []).filter(x => x.ok).length;
+        inviteResult.textContent = `${sent} invite${sent === 1 ? '' : 's'} sent · ${d.pending}/${d.cap} pending. Invite more as friends join.`;
+        inviteFields.innerHTML = ''; for(let i = 0; i < 3; i++) addInviteField();
+      }catch(_e){
+        inviteResult.textContent = 'Could not send invites — try again.';
+      }finally{
+        sendInvitesBtn.disabled = false; sendInvitesBtn.textContent = 'Send invites';
+      }
+    }
+
+    async function checkResume(){
+      const meParam = (params.get('me') || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 16);
+      let saved = null; try{ saved = JSON.parse(localStorage.getItem('vetdiy_wl') || 'null'); }catch(_e){}
+      const code = meParam || (saved && saved.code) || '';
+      if(!code || !CONFIGURED) return;
+      try{
+        const r = await fetch(RPC + '/waitlist_status', { method:'POST', headers:HEADERS, body: JSON.stringify({ p_referral_code: code }) });
+        if(!r.ok) return;
+        const rows = await r.json();
+        const s = Array.isArray(rows) ? rows[0] : rows;
+        if(!s) return;
+        referralCode = code;
+        if(saved && saved.role) selectRole(saved.role === 'contractor' ? 'contractor' : 'customer');
+        if(typeof s.display_count === 'number') setCount(s.display_count);
+        resumeBanner.classList.remove('hidden');
+        resumeBanner.innerHTML = `<b>Welcome back — you're on the list.</b><br/>Position <span class="rp">#${Number(s.list_position || 0).toLocaleString()}</span> · <span class="rp">${Number(s.points || 0).toLocaleString()} pts</span>` +
+          (s.confirmed ? '' : ' · <b>confirm your email for +200</b>');
+        updateShareUrl();
+        showInvite();
+      }catch(_e){}
+    }
+    sendInvitesBtn.addEventListener('click', sendInvites);
 
     customerBtn.addEventListener('click', () => selectRole('customer'));
     contractorBtn.addEventListener('click', () => selectRole('contractor'));
@@ -713,8 +822,10 @@
 
     selectRole('customer');
     updateShareUrl();
+    primeCount();
     scheduleCounter();
     handleConfirm();
+    checkResume();
   </script>
 </body>
 </html>
