@@ -120,3 +120,32 @@ Mobile success criteria:
 - Keep desktop `>900px` hero composition unchanged.
 - Preserve the active design copy, role toggles, waitlist form, preview/backend wiring, and assets.
 - Verify at 822x870 and phone width with no horizontal overflow, clean console, and no page errors.
+
+## Backend readiness follow-up
+
+On 2026-06-27 Marcus asked whether the pre-signup backend is ready for email, phone, contractor info, real FOMO increments, returning-user position, position-change emails, and friend invite emails.
+
+Verified current state:
+- GitHub Pages still has placeholder `CONFIG.supabaseUrl` and `CONFIG.anonKey`, so live submissions remain preview-only.
+- `feat/waitlist-backend` contains a Supabase migration plus `waitlist-submit` and `waitlist-confirm` Edge Functions.
+- Existing backend stores email, phone, role, website, Facebook, trade, ZIP, city, project type, business name, project notes, referral code, referrer, field points, confirmed referral count, confirmation token, source, UTM, and consent flags.
+- Existing backend can send confirmation, confirmed-position, and referrer-moved-up emails through Resend when `RESEND_API_KEY` is configured.
+- Existing counter separates `base_count`, `real_signups`, and organic `display_drift`; `real_signups` increments only on email confirmation, not initial submit.
+- Current deployed frontend does not yet collect `business_name` or `project_notes`, does not normalize `www...` URLs before submit, does not show returning-user position by email/referral code, and does not collect friend invite emails/phones after signup.
+- No hosted Supabase project URL/anon key or Resend secret is verified locally; `supabase` CLI is not installed on this laptop shell.
+
+Recommended backend path:
+- Use Supabase + Edge Functions + Resend, not Google Sheets, because ranking, returning-user lookup, referral attribution, confirmation tokens, RLS, and email side effects need transactional backend behavior.
+- Add a public-safe lookup/resume function that returns non-PII waitlist state by signed token/referral code or magic link, not arbitrary email enumeration.
+- Add an invite function/table for friend emails/phones with sender name, referral code, status, consent-safe rate limits, and email/SMS send audit.
+- Normalize website/Facebook URLs on the client and server so `www.example.com` becomes `https://www.example.com`.
+- Decide whether `real_signups` should increment at initial submit or confirmed email; current anti-gaming design increments on confirmation.
+
+Updated operator rules:
+- Homeowners do not need to enter job/project details during pre-signup unless we intentionally use that as an optional bonus field later.
+- After pressing "Join the waitlist", the user should immediately see success, current position, current points, referral link/deep link, and friend invite fields.
+- Confirming email is worth an additional +200 points.
+- Bad emails should not earn durable points; anti-spam should protect scoring until confirmation/acceptance.
+- A user may add up to 20 friend emails/phone numbers while pending; after that, at least one invitee must accept/confirm before they can add more.
+- Invite emails should come from VetDIY and say the named friend recommended them.
+- Returning visitors should see their current place and ways to earn more points via a safe resume/deep-link token, not open lookup by arbitrary email.

@@ -1,0 +1,3 @@
+
+# Local verification artifacts (Playwright screenshots) — never publish to Pages
+output/
