@@ -690,7 +690,7 @@
       if(typeof data.display_count === 'number') setCount(data.display_count);
       referralCode = data.referral_code || referralCode;
       try{ localStorage.setItem('vetdiy_wl', JSON.stringify({ code: referralCode, role: backendRole() })); }catch(_e){}
-      showSuccess(successHtml(data.position, data.referral_code, false));
+      showSuccess(successHtml(data.display_position ?? data.position, data.referral_code, false));
       showInvite();
     }
 
@@ -717,7 +717,7 @@
         updateShareUrl();
         try{ localStorage.setItem('vetdiy_wl', JSON.stringify({ code: referralCode, role: backendRole() })); }catch(_e){}
         showSuccess(`<b>You’re confirmed 🎖️ +200 points.</b><br/>` +
-          (data.position ? `Position: <b>#${Number(data.position).toLocaleString()}</b>. ` : '') +
+          ((data.display_position ?? data.position) ? `Position: <b>#${Number(data.display_position ?? data.position).toLocaleString()}</b>. ` : '') +
           `We’ll email you when VetDIY opens in your area.<br/><span>Share: ${shareUrl.textContent}</span>`);
         showInvite();
       }catch(_error){
@@ -790,7 +790,7 @@
         if(saved && saved.role) selectRole(saved.role === 'contractor' ? 'contractor' : 'customer');
         if(typeof s.display_count === 'number') setCount(s.display_count);
         resumeBanner.classList.remove('hidden');
-        resumeBanner.innerHTML = `<b>Welcome back — you're on the list.</b><br/>Position <span class="rp">#${Number(s.list_position || 0).toLocaleString()}</span> · <span class="rp">${Number(s.points || 0).toLocaleString()} pts</span>` +
+        resumeBanner.innerHTML = `<b>Welcome back — you're on the list.</b><br/>Position <span class="rp">#${Number(s.display_position || s.list_position || 0).toLocaleString()}</span> · <span class="rp">${Number(s.points || 0).toLocaleString()} pts</span>` +
           (s.confirmed ? '' : ' · <b>confirm your email for +200</b>');
         updateShareUrl();
         showInvite();
