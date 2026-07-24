@@ -277,6 +277,20 @@
     .invite-box .sub{color:rgba(255,255,255,.68);font-size:.85rem;margin-bottom:12px}
     .invite-box .sub em{color:#9ee7bd;font-style:normal;font-weight:800}
     .invite-row{margin-bottom:8px}
+    .invite-row input.dupe{border-color:#e0654f !important;background:rgba(224,101,79,.10)}
+    .invite-row input.okmail{border-color:#5fa77a !important}
+    .win{text-align:center}
+    .win-badge{font-weight:800;font-size:1.05rem;color:#fff}
+    .win-pos{font-size:1.7rem;font-weight:900;letter-spacing:-.03em;margin:6px 0;color:#f0c77f}
+    .win-sub{color:rgba(255,255,255,.78);font-size:.9rem;margin-bottom:8px}
+    .prog{height:8px;border-radius:99px;background:rgba(255,255,255,.12);overflow:hidden;margin:10px 0 6px}
+    .prog-fill{height:100%;background:linear-gradient(90deg,#b8232f,#d7b37a,#1d5c96);transition:width .5s}
+    .win-pts{font-size:.9rem;color:rgba(255,255,255,.85);margin-bottom:6px}
+    .left-list{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:6px 0}
+    .left-chip{background:rgba(244,216,166,.12);border:1px dashed rgba(244,216,166,.5);color:#f4d8a6;border-radius:99px;padding:6px 12px;font-size:.82rem;font-weight:700;cursor:pointer}
+    .left-chip:hover{background:rgba(244,216,166,.22)}
+    .win-share{display:inline-flex;gap:8px;margin-top:8px}
+    .win-share button{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);color:#fff;border-radius:10px;padding:8px 14px;font-weight:700;cursor:pointer;font-size:.85rem}
     .cta-secondary{width:100%;margin-top:6px;border:none;border-radius:16px;padding:13px 16px;color:#0d1b31;background:linear-gradient(135deg,#f0c77f,#d7b37a);font-weight:900;font-size:.95rem;cursor:pointer}
     .cta-secondary:disabled{opacity:.6;cursor:default}
     .invite-result{margin-top:9px;font-size:.83rem;color:#9ee7bd;min-height:16px}
@@ -558,6 +572,26 @@
       return total;
     }
 
+    function roleLabel(){ return backendRole() === 'contractor' ? 'Contractor' : 'Homeowner'; }
+    function roleMax(){ return backendRole() === 'contractor' ? 165 : 80; }  // profile-field points, pre confirm/referral
+
+    // point-earning fields still EMPTY for the current role — the "left on the table" list.
+    function unfilledFields(){
+      const out = [];
+      if(!phone.value) out.push({ id:'phone', label:'Phone', pts:25 });
+      if(backendRole() === 'contractor'){
+        if(!document.getElementById('businessName').value) out.push({ id:'businessName', label:'Business name', pts:20 });
+        if(!document.getElementById('website').value)      out.push({ id:'website', label:'Website', pts:50 });
+        if(!document.getElementById('facebook').value)     out.push({ id:'facebook', label:'Facebook', pts:35 });
+        if(!document.getElementById('services').value)     out.push({ id:'services', label:'Primary trade', pts:25 });
+      } else {
+        if(!document.getElementById('zip').value)         out.push({ id:'zip', label:'ZIP code', pts:15 });
+        if(!document.getElementById('projectType').value) out.push({ id:'projectType', label:'First project', pts:20 });
+        if(!document.getElementById('projectNotes').value)out.push({ id:'projectNotes', label:'Project details', pts:10 });
+      }
+      return out;
+    }
+
     function renderPoints(){
       points = calcPoints();
       scoreEl.textContent = `+${points}`;
@@ -675,12 +709,21 @@
     function successHtml(position, code, preview){
       referralCode = code || referralCode;
       updateShareUrl();
-      const label = backendRole() === 'contractor' ? 'contractor' : 'homeowner';
-      return `<b>You’re on the ${label} waitlist.</b><br/>` +
-        (position ? `Estimated position: <b>#${Number(position).toLocaleString()}</b>. ` : '') +
-        `Check your email to confirm your spot — <b>+200 points</b>.` +
-        (referralCode ? `<br/><span>Your invite link: ${shareUrl.textContent}</span>` : '') +
-        (preview ? '<br/><span>Preview mode - connect Supabase to persist real signups.</span>' : '');
+      const pts = calcPoints(), max = roleMax();
+      const pct = Math.max(6, Math.min(100, Math.round(pts / max * 100)));
+      const left = unfilledFields();
+      const leftPts = left.reduce((s, f) => s + f.pts, 0);
+      return `<div class="win">
+        <div class="win-badge">You're on the ${roleLabel()} waitlist 🎖️</div>
+        ${position ? `<div class="win-pos">Your spot: #${Number(position).toLocaleString()}</div>` : ''}
+        <div class="win-sub">Confirm your email for <b>+200 points</b> — check your inbox.</div>
+        <div class="prog"><div class="prog-fill" style="width:${pct}%"></div></div>
+        <div class="win-pts">${pts} pts${leftPts ? ` · <b>${leftPts} points left on the table</b>` : ' · profile maxed 🔥'}</div>
+        ${left.length ? `<div class="left-list">${left.map(f => `<button type="button" class="left-chip" data-focus="${f.id}">+${f.pts} ${f.label}</button>`).join('')}</div>
+          <div class="fine">Tap a field to add it, re-submit, and watch your number drop.</div>` : ''}
+        <div class="win-share"><button type="button" id="winShareBtn">Share your invite link</button></div>
+        ${preview ? '<div class="fine">Preview mode.</div>' : ''}
+      </div>`;
     }
 
     async function submitReal(){
@@ -745,7 +788,25 @@
       inp.addEventListener('input', () => {
         const all = inviteInputs();
         if(inp.value.trim() && all[all.length - 1] === inp && all.length < INVITE_CAP) addInviteField();
+        markInvites();
       });
+    }
+
+    // dedupe + validity coloring: green = will be sent, red = duplicate (a friend only ever counts once —
+    // once, when they confirm their email). Returns the unique, valid, lowercased list to actually send.
+    function markInvites(){
+      const valid = v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+      const seen = new Set();
+      inviteInputs().forEach(inp => {
+        const v = inp.value.trim().toLowerCase();
+        inp.classList.remove('dupe','okmail');
+        if(!v || !valid(v)) return;
+        if(seen.has(v)) inp.classList.add('dupe');
+        else { seen.add(v); inp.classList.add('okmail'); }
+      });
+      const unique = Array.from(seen);
+      if(sendInvitesBtn) sendInvitesBtn.disabled = unique.length === 0;
+      return unique;
     }
 
     function showInvite(){
@@ -757,8 +818,7 @@
 
     async function sendInvites(){
       if(!referralCode) return;
-      const valid = v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
-      const emails = inviteInputs().map(i => i.value.trim()).filter(v => v && valid(v));
+      const emails = markInvites();   // unique + valid + lowercased; duplicates are already flagged red
       if(!emails.length){ inviteResult.textContent = "Add at least one friend's email."; return; }
       sendInvitesBtn.disabled = true; sendInvitesBtn.textContent = 'Sending…';
       try{
@@ -797,6 +857,22 @@
       }catch(_e){}
     }
     sendInvitesBtn.addEventListener('click', sendInvites);
+
+    // success-popup interactions: tap a "points left" chip to jump to + focus that field; share button.
+    success.addEventListener('click', (e) => {
+      const chip = e.target.closest('.left-chip');
+      if(chip){
+        revealStepTwo();
+        const el = document.getElementById(chip.dataset.focus);
+        if(el){ el.scrollIntoView({ behavior:'smooth', block:'center' }); setTimeout(() => el.focus(), 320); }
+        return;
+      }
+      if(e.target.closest('#winShareBtn')){
+        const url = shareUrl.textContent;
+        if(navigator.share){ navigator.share({ title:'VetDIY', text:'Join me on the VetDIY waitlist for trusted Veteran pros.', url }).catch(() => {}); }
+        else if(navigator.clipboard){ navigator.clipboard.writeText(url); e.target.textContent = 'Link copied!'; }
+      }
+    });
 
     customerBtn.addEventListener('click', () => selectRole('customer'));
     contractorBtn.addEventListener('click', () => selectRole('contractor'));
