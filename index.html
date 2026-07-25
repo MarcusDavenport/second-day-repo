@@ -291,6 +291,8 @@
     .left-chip:hover{background:rgba(244,216,166,.22)}
     .win-share{display:inline-flex;gap:8px;margin-top:8px}
     .win-share button{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);color:#fff;border-radius:10px;padding:8px 14px;font-weight:700;cursor:pointer;font-size:.85rem}
+    .crossrole{margin-top:10px}
+    .crossrole button{background:linear-gradient(135deg,#1d5c96,#0d3a63);color:#fff;border:none;border-radius:12px;padding:10px 16px;font-weight:800;cursor:pointer;font-size:.86rem}
     .cta-secondary{width:100%;margin-top:6px;border:none;border-radius:16px;padding:13px 16px;color:#0d1b31;background:linear-gradient(135deg,#f0c77f,#d7b37a);font-weight:900;font-size:.95rem;cursor:pointer}
     .cta-secondary:disabled{opacity:.6;cursor:default}
     .invite-result{margin-top:9px;font-size:.83rem;color:#9ee7bd;min-height:16px}
@@ -504,6 +506,7 @@
     let points = 10;
     let referralCode = null;
     let submitting = false;
+    let crossRolePro = false;   // homeowner adding contractor details from the success popup
 
     const activities = [
       'A homeowner in Austin just joined.',
@@ -696,6 +699,13 @@
         payload.zip = document.getElementById('zip').value.trim() || null;
         payload.project_type = document.getElementById('projectType').value.trim() || null;
         payload.project_notes = document.getElementById('projectNotes').value.trim() || null;
+        if(crossRolePro){   // homeowner also opting in as a pro — role STAYS homeowner, points STACK
+          payload.contractor_opt_in = true;
+          payload.business_name = document.getElementById('businessName').value.trim() || null;
+          payload.website = normalizeUrl(document.getElementById('website').value);
+          payload.facebook = normalizeUrl(document.getElementById('facebook').value);
+          payload.trade = document.getElementById('services').value.trim() || null;
+        }
       }
 
       return payload;
@@ -722,6 +732,11 @@
         ${left.length ? `<div class="left-list">${left.map(f => `<button type="button" class="left-chip" data-focus="${f.id}">+${f.pts} ${f.label}</button>`).join('')}</div>
           <div class="fine">Tap a field to add it, re-submit, and watch your number drop.</div>` : ''}
         <div class="win-share"><button type="button" id="winShareBtn">Share your invite link</button></div>
+        ${backendRole() === 'contractor'
+          ? `<div class="fine" style="margin-top:8px">You joined as a Contractor — you also get a free homeowner account to hire pros later, nothing to do.</div>`
+          : (crossRolePro
+              ? `<div class="fine" style="margin-top:8px">✅ Contractor application added — you're on <b>both</b> lists now.</div>`
+              : `<div class="crossrole"><button type="button" id="addProBtn">🔧 Also a pro? Add contractor details for more points</button></div>`)}
         ${preview ? '<div class="fine">Preview mode.</div>' : ''}
       </div>`;
     }
@@ -865,6 +880,14 @@
         revealStepTwo();
         const el = document.getElementById(chip.dataset.focus);
         if(el){ el.scrollIntoView({ behavior:'smooth', block:'center' }); setTimeout(() => el.focus(), 320); }
+        return;
+      }
+      if(e.target.closest('#addProBtn')){
+        crossRolePro = true;
+        revealStepTwo();
+        contractorFields.classList.remove('hidden');
+        contractorFields.scrollIntoView({ behavior:'smooth', block:'center' });
+        setTimeout(() => { const b = document.getElementById('businessName'); if(b) b.focus(); }, 320);
         return;
       }
       if(e.target.closest('#winShareBtn')){
