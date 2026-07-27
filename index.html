@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#071222" />
   <title>VetDIY Waitlist</title>
   <link rel="icon" href="assets/logo.png" />
   <meta name="description" content="Join the VetDIY early-access waitlist — trusted Veteran home-service pros. Reserve your spot, earn points, and invite friends to move up the list." />
@@ -17,6 +18,7 @@
   <meta name="twitter:image" content="https://vetdiy.com/assets/logo.png" />
   <style>
     :root{
+      color-scheme:dark;
       --navy:#071222;
       --navy-2:#0d1b31;
       --cream:#f7efe0;
@@ -33,6 +35,9 @@
       --homeowner-photo:url("assets/bg-homeowner.png");
     }
     *{box-sizing:border-box}
+    button,a,input,select{touch-action:manipulation}
+    .skip-link{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+    .skip-link:focus-visible{position:fixed;left:16px;top:16px;width:auto;height:auto;padding:10px 14px;margin:0;overflow:visible;clip:auto;z-index:20;background:#f0c77f;color:#071222;border-radius:6px;font-weight:900}
     body{
       margin:0;
       min-height:100vh;
@@ -80,7 +85,7 @@
         var(--homeowner-photo) center center / cover no-repeat;
       box-shadow: 0 35px 100px rgba(0,0,0,.45), inset 0 0 0 1px rgba(255,255,255,.24);
       transform:rotate(1.3deg);
-      transition: all 850ms ease;
+      transition: background 850ms ease, transform 850ms ease;
     }
     body.contractor .bg{
       background:
@@ -171,15 +176,15 @@
     }
     h1{
       margin:22px 0 18px;
-      font-size:clamp(3rem, 6vw, 6.6rem);
+      font-size:5.8rem;
       line-height:.9;
-      letter-spacing:-.075em;
+      letter-spacing:0;
       max-width:850px;
     }
     .accent{color:#f0c77f}
     .subhead{
       max-width:630px;
-      font-size:clamp(1.05rem, 1.5vw, 1.35rem);
+      font-size:1.25rem;
       line-height:1.55;
       color:rgba(255,255,255,.78);
       margin:0 0 30px;
@@ -193,7 +198,7 @@
       background:rgba(255,255,255,.08);
       backdrop-filter: blur(16px);
     }
-    .stat strong{display:block;font-size:1.5rem;letter-spacing:-.04em}
+    .stat strong{display:block;font-size:1.5rem;letter-spacing:0}
     .stat span{display:block;margin-top:5px;color:rgba(255,255,255,.66);font-size:.9rem}
     .perks-label{margin-top:28px;color:#f4d8a6;font-weight:750;font-size:.78rem;text-transform:uppercase;letter-spacing:.12em}
     .perks{margin-top:12px;display:grid;gap:11px;max-width:540px}
@@ -232,21 +237,23 @@
       filter:blur(4px)
     }
     .live-label{display:flex;align-items:center;justify-content:space-between;gap:12px;color:rgba(255,255,255,.72);font-size:.86rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em}
-    .count{font-size:3rem;line-height:1;font-weight:900;letter-spacing:-.06em;margin-top:10px;font-variant-numeric: tabular-nums;}
+    .count{font-size:3rem;line-height:1;font-weight:900;letter-spacing:0;margin-top:10px;font-variant-numeric: tabular-nums;}
     .count small{font-size:1rem;color:rgba(255,255,255,.62);font-weight:700;letter-spacing:0}
     .activity{margin-top:10px;color:#f4d8a6;font-size:.92rem;min-height:22px}
     .selector{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
     .role{
-      appearance:none;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.08);color:#fff;border-radius:18px;padding:14px 12px;font-weight:850;cursor:pointer;text-align:left;transition:.2s ease;
+      appearance:none;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.08);color:#fff;border-radius:18px;padding:14px 12px;font-weight:850;cursor:pointer;text-align:left;transition:border-color .2s ease,background-color .2s ease,box-shadow .2s ease,transform .2s ease;
     }
     .role span{display:block;color:rgba(255,255,255,.63);font-size:.78rem;font-weight:650;margin-top:3px}
+    .role:hover{border-color:rgba(244,216,166,.55);background:rgba(244,216,166,.11)}
     .role.active{border-color:rgba(244,216,166,.8);background:rgba(244,216,166,.16);box-shadow:0 0 0 3px rgba(244,216,166,.09)}
     label{display:block;color:rgba(255,255,255,.75);font-size:.88rem;font-weight:750;margin:12px 0 7px}
     input, select{
-      width:100%;border:1px solid rgba(255,255,255,.16);border-radius:18px;background:rgba(255,255,255,.1);color:#fff;padding:15px 15px;font-size:1rem;outline:none;transition:.2s ease;
+      width:100%;border:1px solid rgba(255,255,255,.16);border-radius:18px;background:rgba(255,255,255,.1);color:#fff;padding:15px 15px;font-size:1rem;outline:none;transition:border-color .2s ease,background-color .2s ease,box-shadow .2s ease;
     }
     input::placeholder{color:rgba(255,255,255,.45)}
     input:focus, select:focus{border-color:rgba(244,216,166,.8);box-shadow:0 0 0 3px rgba(244,216,166,.1)}
+    button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible{outline:3px solid #f0c77f;outline-offset:3px}
     select option{color:#0d1b31}
     .hidden{display:none!important}
     .field-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -259,7 +266,7 @@
     .point-item{display:flex;justify-content:space-between;gap:12px;padding:10px 12px;border-radius:15px;background:rgba(255,255,255,.07);font-size:.9rem;color:rgba(255,255,255,.75)}
     .point-item b{color:#fff}.point-item em{font-style:normal;color:#9ee7bd;font-weight:900}
     .cta{
-      width:100%;margin-top:16px;border:none;border-radius:20px;padding:16px 18px;color:#fff;background:linear-gradient(135deg,var(--red),#7f1420);font-weight:900;font-size:1rem;cursor:pointer;box-shadow:0 18px 40px rgba(184,35,47,.32);transition:.2s ease;
+      width:100%;margin-top:16px;border:none;border-radius:20px;padding:16px 18px;color:#fff;background:linear-gradient(135deg,var(--red),#7f1420);font-weight:900;font-size:1rem;cursor:pointer;box-shadow:0 18px 40px rgba(184,35,47,.32);transition:transform .2s ease,box-shadow .2s ease;
     }
     .cta:hover{transform:translateY(-1px);box-shadow:0 22px 50px rgba(184,35,47,.42)}
     .fine{margin:12px 2px 0;color:rgba(255,255,255,.55);font-size:.8rem;line-height:1.4}
@@ -281,7 +288,10 @@
     .invite-row input.okmail{border-color:#5fa77a !important}
     .win{text-align:center}
     .win-badge{font-weight:800;font-size:1.05rem;color:#fff}
-    .win-pos{font-size:1.7rem;font-weight:900;letter-spacing:-.03em;margin:6px 0;color:#f0c77f}
+    .rank-stack{display:grid;gap:3px;margin:7px 0 9px}
+    .win-pos{font-size:1.7rem;font-weight:900;margin:0;color:#f0c77f;font-variant-numeric:tabular-nums}
+    .win-local{font-size:.95rem;font-weight:800;color:#9ee7bd;font-variant-numeric:tabular-nums}
+    .win-local.missing{color:rgba(255,255,255,.7);font-weight:700}
     .win-sub{color:rgba(255,255,255,.78);font-size:.9rem;margin-bottom:8px}
     .prog{height:8px;border-radius:99px;background:rgba(255,255,255,.12);overflow:hidden;margin:10px 0 6px}
     .prog-fill{height:100%;background:linear-gradient(90deg,#b8232f,#d7b37a,#1d5c96);transition:width .5s}
@@ -333,9 +343,13 @@
     @media (max-width: 380px){
       h1{font-size:3.85rem}
     }
+    @media (prefers-reduced-motion: reduce){
+      *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+    }
   </style>
 </head>
 <body>
+  <a class="skip-link" href="#mainContent">Skip to signup</a>
   <div class="page">
     <div class="bg"></div>
     <header class="topbar">
@@ -343,7 +357,7 @@
       <div class="top-pill"><span class="dot"></span><span>Private launch access is moving fast</span></div>
     </header>
 
-    <main>
+    <main id="mainContent">
       <section class="hero-copy">
         <div class="eyebrow" id="eyebrow">Homeowner early access</div>
         <h1 id="heroTitle">Get early access before your area <span class="accent">fills up.</span></h1>
@@ -363,35 +377,37 @@
           <div class="activity" id="activity">A contractor in Tampa just joined.</div>
         </div>
 
-        <div class="resume-banner hidden" id="resumeBanner"></div>
+        <div class="resume-banner hidden" id="resumeBanner" aria-live="polite"></div>
 
-        <div class="selector" role="tablist" aria-label="Choose waitlist type">
-          <button class="role" id="customerBtn" type="button">Homeowner <span>I need work done</span></button>
-          <button class="role" id="contractorBtn" type="button">Contractor <span>I want more jobs</span></button>
+        <div class="selector" role="group" aria-label="Choose waitlist type">
+          <button class="role" id="customerBtn" type="button" aria-pressed="false">Homeowner <span>I need work done</span></button>
+          <button class="role" id="contractorBtn" type="button" aria-pressed="false">Contractor <span>I want more jobs</span></button>
         </div>
 
         <form id="signupForm">
           <input id="company_hp" name="company" class="hidden" type="text" tabindex="-1" autocomplete="off" aria-hidden="true" />
 
           <label for="email">Start with your email</label>
-          <input id="email" name="email" type="email" placeholder="you@example.com" required />
+          <input id="email" name="email" type="email" placeholder="you@example.com" autocomplete="email" spellcheck="false" required />
 
           <div id="stepTwo" class="hidden extend">
-            <label for="phone">Add your phone to move higher</label>
-            <input id="phone" name="phone" type="tel" placeholder="(555) 123-4567" />
+            <label for="phone">Add your phone to secure your profile (+25)</label>
+            <input id="phone" name="phone" type="tel" placeholder="(555) 123-4567" autocomplete="tel" />
+            <label for="locationField">City &amp; state or ZIP code</label>
+            <input id="locationField" name="location" type="text" placeholder="Tampa, FL or 33602" autocomplete="address-level2" data-points="15" />
           </div>
 
           <div id="contractorFields" class="hidden extend">
             <label for="businessName">Business name</label>
-            <input id="businessName" name="businessName" type="text" placeholder="Your Business LLC" data-points="20" />
+            <input id="businessName" name="businessName" type="text" placeholder="Your Business LLC" autocomplete="organization" data-points="20" />
             <div class="field-grid">
               <div>
                 <label for="website">Website</label>
-                <input id="website" name="website" type="text" inputmode="url" placeholder="www.yourbusiness.com" data-points="50" />
+                <input id="website" name="website" type="url" placeholder="https://yourbusiness.com" autocomplete="url" spellcheck="false" data-points="50" />
               </div>
               <div>
                 <label for="facebook">Facebook page</label>
-                <input id="facebook" name="facebook" type="text" inputmode="url" placeholder="facebook.com/yourpage" data-points="35" />
+                <input id="facebook" name="facebook" type="url" placeholder="https://facebook.com/yourpage" autocomplete="url" spellcheck="false" data-points="35" />
               </div>
             </div>
             <label for="services">Primary trade</label>
@@ -407,25 +423,17 @@
           </div>
 
           <div id="customerFields" class="hidden extend">
-            <div class="field-grid">
-              <div>
-                <label for="zip">ZIP code</label>
-                <input id="zip" name="zip" inputmode="numeric" placeholder="33602" data-points="15" />
-              </div>
-              <div>
-                <label for="projectType">First project</label>
-                <select id="projectType" name="projectType" data-points="20">
-                  <option value="">Choose one</option>
-                  <option>Home repair</option>
-                  <option>Painting</option>
-                  <option>Yard work</option>
-                  <option>Moving help</option>
-                  <option>Cleaning</option>
-                </select>
-              </div>
-            </div>
+            <label for="projectType">First project</label>
+            <select id="projectType" name="projectType" data-points="20">
+              <option value="">Choose one</option>
+              <option>Home repair</option>
+              <option>Painting</option>
+              <option>Yard work</option>
+              <option>Moving help</option>
+              <option>Cleaning</option>
+            </select>
             <label for="projectNotes">Project details (optional)</label>
-            <input id="projectNotes" name="projectNotes" type="text" placeholder="Tell us the job you need done" data-points="10" />
+            <input id="projectNotes" name="projectNotes" type="text" placeholder="Tell us the job you need done" autocomplete="off" data-points="10" />
           </div>
 
           <div id="shareBox" class="share-box hidden">
@@ -441,17 +449,17 @@
             <div class="point-list" id="pointList"></div>
           </div>
 
-          <div class="success" id="success"></div>
+          <div class="success" id="success" aria-live="polite" tabindex="-1"></div>
 
           <div class="invite-box hidden" id="inviteBox">
             <h4>Invite friends to jump the line</h4>
             <div class="sub">Each friend who joins &amp; confirms earns you <em>+100</em> — you both move up.</div>
             <div id="inviteFields"></div>
             <button type="button" class="cta-secondary" id="sendInvitesBtn">Send invites</button>
-            <div class="invite-result" id="inviteResult"></div>
+            <div class="invite-result" id="inviteResult" aria-live="polite"></div>
           </div>
 
-          <p class="fine">We'll only use your info to email you about VetDIY's launch — no spam, unsubscribe anytime. The VetDIY app is coming to iOS and Android for homeowners and Veteran contractors. <a href="privacy.html" style="color:#f4d8a6">Privacy Policy</a> &middot; <a href="terms.html" style="color:#f4d8a6">Terms of Service</a></p>
+          <p class="fine">We'll use your information to secure your profile and email you about VetDIY's launch — no spam, unsubscribe anytime. We won't send marketing texts unless you opt in later. The VetDIY app is coming to iOS and Android for homeowners and Veteran contractors. <a href="privacy.html" style="color:#f4d8a6">Privacy Policy</a> &middot; <a href="terms.html" style="color:#f4d8a6">Terms of Service</a></p>
         </form>
       </section>
     </main>
@@ -463,6 +471,7 @@
     const contractorBtn = document.getElementById('contractorBtn');
     const email = document.getElementById('email');
     const phone = document.getElementById('phone');
+    const locationField = document.getElementById('locationField');
     const stepTwo = document.getElementById('stepTwo');
     const pointsPanel = document.getElementById('pointsPanel');
     const contractorFields = document.getElementById('contractorFields');
@@ -507,6 +516,10 @@
     let referralCode = null;
     let submitting = false;
     let crossRolePro = false;   // homeowner adding contractor details from the success popup
+    const POSITION_FLOOR = 200;
+    const POSITION_SCALE = 1200;
+    const PREVIEW_MARKET_SHARE = .01;
+    const REDUCED_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     const activities = [
       'A homeowner in Austin just joined.',
@@ -524,6 +537,8 @@
       body.classList.add(nextRole);
       customerBtn.classList.toggle('active', nextRole === 'customer');
       contractorBtn.classList.toggle('active', nextRole === 'contractor');
+      customerBtn.setAttribute('aria-pressed', String(nextRole === 'customer'));
+      contractorBtn.setAttribute('aria-pressed', String(nextRole === 'contractor'));
       contractorFields.classList.toggle('hidden', nextRole !== 'contractor' || stepTwo.classList.contains('hidden'));
       customerFields.classList.toggle('hidden', nextRole !== 'customer' || stepTwo.classList.contains('hidden'));
       if(nextRole === 'contractor'){
@@ -558,39 +573,58 @@
       return role === 'contractor' ? 'contractor' : 'homeowner';
     }
 
+    function contractorProfileComplete(){
+      return Boolean(
+        document.getElementById('businessName').value.trim() &&
+        document.getElementById('services').value.trim()
+      );
+    }
+
     function calcPoints(){
       let total = hasEmail() ? 10 : 0;
       if(phone.value) total += 25;
-      if(role === 'contractor'){
+      if(locationField.value.trim()) total += 15;
+      if(role === 'contractor' || crossRolePro){
         if(document.getElementById('businessName').value) total += 20;
         if(document.getElementById('website').value) total += 50;
         if(document.getElementById('facebook').value) total += 35;
         if(document.getElementById('services').value) total += 25;
       }
       if(role === 'customer'){
-        if(document.getElementById('zip').value) total += 15;
         if(document.getElementById('projectType').value) total += 20;
         if(document.getElementById('projectNotes').value) total += 10;
       }
+      if(role === 'customer' && crossRolePro && contractorProfileComplete()) total += 50;
       return total;
     }
 
     function roleLabel(){ return backendRole() === 'contractor' ? 'Contractor' : 'Homeowner'; }
-    function roleMax(){ return backendRole() === 'contractor' ? 165 : 80; }  // profile-field points, pre confirm/referral
+    function roleMax(){
+      if(backendRole() === 'contractor') return 180;
+      return crossRolePro ? 260 : 80;
+    }
 
     // point-earning fields still EMPTY for the current role — the "left on the table" list.
     function unfilledFields(){
       const out = [];
       if(!phone.value) out.push({ id:'phone', label:'Phone', pts:25 });
-      if(backendRole() === 'contractor'){
+      if(!locationField.value.trim()) out.push({ id:'locationField', label:'Local rank', pts:15 });
+      if(backendRole() === 'contractor' || crossRolePro){
         if(!document.getElementById('businessName').value) out.push({ id:'businessName', label:'Business name', pts:20 });
         if(!document.getElementById('website').value)      out.push({ id:'website', label:'Website', pts:50 });
         if(!document.getElementById('facebook').value)     out.push({ id:'facebook', label:'Facebook', pts:35 });
         if(!document.getElementById('services').value)     out.push({ id:'services', label:'Primary trade', pts:25 });
-      } else {
-        if(!document.getElementById('zip').value)         out.push({ id:'zip', label:'ZIP code', pts:15 });
+      }
+      if(backendRole() === 'homeowner'){
         if(!document.getElementById('projectType').value) out.push({ id:'projectType', label:'First project', pts:20 });
         if(!document.getElementById('projectNotes').value)out.push({ id:'projectNotes', label:'Project details', pts:10 });
+      }
+      if(backendRole() === 'homeowner' && crossRolePro && !contractorProfileComplete()){
+        out.push({
+          id: document.getElementById('businessName').value ? 'services' : 'businessName',
+          label: 'Second-profile bonus',
+          pts: 50
+        });
       }
       return out;
     }
@@ -601,16 +635,19 @@
       const rows = [];
       if(hasEmail()) rows.push(['Email reserved', '+10']);
       rows.push([phone.value ? 'Phone added' : 'Add phone number', phone.value ? '+25' : '+25 available']);
-      if(role === 'contractor'){
+      rows.push([locationField.value.trim() ? 'Local area added' : 'Add city or ZIP', locationField.value.trim() ? '+15' : '+15 available']);
+      if(role === 'contractor' || crossRolePro){
         rows.push([document.getElementById('businessName').value ? 'Business name added' : 'Add business name', '+20']);
         rows.push([document.getElementById('website').value ? 'Website added' : 'Add website', '+50']);
         rows.push([document.getElementById('facebook').value ? 'Facebook page added' : 'Add Facebook page', '+35']);
         rows.push([document.getElementById('services').value ? 'Trade selected' : 'Choose your trade', '+25']);
       }
       if(role === 'customer'){
-        rows.push([document.getElementById('zip').value ? 'ZIP added' : 'Add ZIP code', '+15']);
         rows.push([document.getElementById('projectType').value ? 'Project type added' : 'Choose project type', '+20']);
         rows.push([document.getElementById('projectNotes').value ? 'Project details added' : 'Add project details', '+10']);
+      }
+      if(role === 'customer' && crossRolePro){
+        rows.push([contractorProfileComplete() ? 'Second profile complete' : 'Complete business name + trade', '+50']);
       }
       rows.push(['Confirm your email', '+200']);
       rows.push(['Each confirmed referral', '+100']);
@@ -679,13 +716,43 @@
       return /^https?:\/\//i.test(v) ? v : 'https://' + v.replace(/^\/+/, '');
     }
 
+    function escapeHtml(value){
+      return String(value ?? '').replace(/[&<>"']/g, character => ({
+        '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'
+      })[character]);
+    }
+
+    function locationPayload(){
+      const value = locationField.value.trim().replace(/\s+/g, ' ');
+      if(!value) return { city:null, zip:null };
+      return /^\d{5}(?:-\d{4})?$/.test(value)
+        ? { city:null, zip:value }
+        : { city:value, zip:null };
+    }
+
+    function currentLocationLabel(){
+      const value = locationField.value.trim().replace(/\s+/g, ' ');
+      return /^\d{5}(?:-\d{4})?$/.test(value) ? `ZIP ${value.slice(0, 5)}` : value;
+    }
+
+    function estimatedPosition(baseline, score){
+      return Math.max(1, Math.round(
+        POSITION_FLOOR +
+        (Math.max(Number(baseline) || POSITION_FLOOR, POSITION_FLOOR) - POSITION_FLOOR) *
+        Math.exp(-(Number(score) || 0) / POSITION_SCALE)
+      ));
+    }
+
     function collectPayload(){
+      const local = locationPayload();
       const payload = {
         email: email.value.trim(),
         role: backendRole(),
         phone: phone.value.trim() || null,
+        city: local.city,
+        zip: local.zip,
         ref: REF || null,
-        source: 'waitlist-landing',
+        source: crossRolePro ? 'waitlist-landing-pro-upsell' : 'waitlist-landing',
         utm: Object.keys(UTM).length ? UTM : null,
         hp: honeypot ? honeypot.value : ''
       };
@@ -696,7 +763,6 @@
         payload.facebook = normalizeUrl(document.getElementById('facebook').value);
         payload.trade = document.getElementById('services').value.trim() || null;
       } else {
-        payload.zip = document.getElementById('zip').value.trim() || null;
         payload.project_type = document.getElementById('projectType').value.trim() || null;
         payload.project_notes = document.getElementById('projectNotes').value.trim() || null;
         if(crossRolePro){   // homeowner also opting in as a pro — role STAYS homeowner, points STACK
@@ -714,30 +780,42 @@
     function showSuccess(html){
       success.classList.add('show');
       success.innerHTML = html;
+      requestAnimationFrame(() => success.focus({ preventScroll:true }));
     }
 
-    function successHtml(position, code, preview){
-      referralCode = code || referralCode;
+    function successHtml(context){
+      referralCode = context.code || referralCode;
       updateShareUrl();
-      const pts = calcPoints(), max = roleMax();
-      const pct = Math.max(6, Math.min(100, Math.round(pts / max * 100)));
+      const fieldPts = typeof context.fieldPoints === 'number' ? context.fieldPoints : calcPoints();
+      const totalPts = typeof context.points === 'number' ? context.points : fieldPts;
+      const max = roleMax();
+      const pct = Math.max(6, Math.min(100, Math.round(fieldPts / max * 100)));
       const left = unfilledFields();
-      const leftPts = left.reduce((s, f) => s + f.pts, 0);
+      const leftPts = Math.max(0, max - fieldPts);
+      const globalPosition = Number(context.displayPosition) || null;
+      const localPosition = Number(context.localDisplayPosition) || null;
+      const localCount = Number(context.localDisplayCount) || null;
+      const localLabel = escapeHtml(context.localLabel || currentLocationLabel() || 'Local');
       return `<div class="win">
         <div class="win-badge">You're on the ${roleLabel()} waitlist 🎖️</div>
-        ${position ? `<div class="win-pos">Your spot: #${Number(position).toLocaleString()}</div>` : ''}
-        <div class="win-sub">Confirm your email for <b>+200 points</b> — check your inbox.</div>
+        <div class="rank-stack">
+          ${globalPosition ? `<div class="win-pos">Global estimate: #${globalPosition.toLocaleString()}</div>` : ''}
+          ${localPosition
+            ? `<div class="win-local">${localLabel} estimate: #${localPosition.toLocaleString()}${localCount ? ` of ${localCount.toLocaleString()}` : ''}</div>`
+            : `<div class="win-local missing">Add your city or ZIP to unlock a local estimate.</div>`}
+        </div>
+        <div class="win-sub">${context.confirmed ? '<b>Email confirmed.</b> Your +200 points are included.' : 'Confirm your email for <b>+200 points</b> — check your inbox.'}</div>
         <div class="prog"><div class="prog-fill" style="width:${pct}%"></div></div>
-        <div class="win-pts">${pts} pts${leftPts ? ` · <b>${leftPts} points left on the table</b>` : ' · profile maxed 🔥'}</div>
-        ${left.length ? `<div class="left-list">${left.map(f => `<button type="button" class="left-chip" data-focus="${f.id}">+${f.pts} ${f.label}</button>`).join('')}</div>
+        <div class="win-pts">${totalPts.toLocaleString()} total pts${leftPts ? ` · <b>${leftPts} profile points left</b>` : ' · profile maxed 🔥'}</div>
+        ${left.length && leftPts ? `<div class="left-list">${left.map(f => `<button type="button" class="left-chip" data-focus="${f.id}">+${f.pts} ${f.label}</button>`).join('')}</div>
           <div class="fine">Tap a field to add it, re-submit, and watch your number drop.</div>` : ''}
         <div class="win-share"><button type="button" id="winShareBtn">Share your invite link</button></div>
         ${backendRole() === 'contractor'
           ? `<div class="fine" style="margin-top:8px">You joined as a Contractor — you also get a free homeowner account to hire pros later, nothing to do.</div>`
           : (crossRolePro
-              ? `<div class="fine" style="margin-top:8px">✅ Contractor application added — you're on <b>both</b> lists now.</div>`
-              : `<div class="crossrole"><button type="button" id="addProBtn">🔧 Also a pro? Add contractor details for more points</button></div>`)}
-        ${preview ? '<div class="fine">Preview mode.</div>' : ''}
+              ? `<div class="fine" style="margin-top:8px">✅ Contractor application added — you're on <b>both</b> lists now. ${contractorProfileComplete() ? 'Your +50 second-profile bonus is included.' : 'Complete business name + trade for the +50 second-profile bonus.'}</div>`
+              : `<div class="crossrole"><button type="button" id="addProBtn">🔧 Also a pro? Complete a contractor profile for +50 points</button></div>`)}
+        ${context.preview ? '<div class="fine">Preview mode.</div>' : ''}
       </div>`;
     }
 
@@ -747,14 +825,45 @@
       if(!response.ok || data.error) throw new Error(data.error || ('HTTP ' + response.status));
       if(typeof data.display_count === 'number') setCount(data.display_count);
       referralCode = data.referral_code || referralCode;
-      try{ localStorage.setItem('vetdiy_wl', JSON.stringify({ code: referralCode, role: backendRole() })); }catch(_e){}
-      showSuccess(successHtml(data.display_position ?? data.position, data.referral_code, false));
+      if(data.role) selectRole(data.role === 'contractor' ? 'contractor' : 'customer');
+      crossRolePro = data.contractor_opt_in === true || crossRolePro;
+      if(crossRolePro && backendRole() === 'homeowner') contractorFields.classList.remove('hidden');
+      try{
+        localStorage.setItem('vetdiy_wl', JSON.stringify({
+          code: referralCode,
+          role: data.role || backendRole(),
+          localLabel: currentLocationLabel(),
+          contractorOptIn: crossRolePro
+        }));
+      }catch(_e){}
+      showSuccess(successHtml({
+        displayPosition: data.display_position,
+        localDisplayPosition: data.local_display_position,
+        localDisplayCount: data.local_display_count,
+        points: data.points,
+        fieldPoints: data.field_points,
+        confirmed: data.confirmed === true,
+        code: data.referral_code,
+        localLabel: currentLocationLabel(),
+        preview: false
+      }));
       showInvite();
     }
 
     function submitPreview(){
-      const position = Math.max(1, waitCount - Math.floor(points * 4.7) - Math.floor(Math.random() * 35));
-      showSuccess(successHtml(position, cleanCode(email.value.trim()), true));
+      const position = estimatedPosition(waitCount, points);
+      const hasLocation = Boolean(currentLocationLabel());
+      showSuccess(successHtml({
+        displayPosition: position,
+        localDisplayPosition: hasLocation ? Math.max(1, Math.round(position * PREVIEW_MARKET_SHARE)) : null,
+        localDisplayCount: hasLocation ? Math.max(1, Math.round(waitCount * PREVIEW_MARKET_SHARE)) : null,
+        points,
+        fieldPoints: points,
+        confirmed: false,
+        code: cleanCode(email.value.trim()),
+        localLabel: currentLocationLabel(),
+        preview: true
+      }));
       showInvite();
     }
 
@@ -772,11 +881,29 @@
         if(!response.ok || data.error) throw new Error(data.error || ('HTTP ' + response.status));
         if(typeof data.display_count === 'number') setCount(data.display_count);
         referralCode = data.referral_code || referralCode;
+        if(data.role) selectRole(data.role === 'contractor' ? 'contractor' : 'customer');
+        crossRolePro = data.contractor_opt_in === true || crossRolePro;
         updateShareUrl();
-        try{ localStorage.setItem('vetdiy_wl', JSON.stringify({ code: referralCode, role: backendRole() })); }catch(_e){}
-        showSuccess(`<b>You’re confirmed 🎖️ +200 points.</b><br/>` +
-          ((data.display_position ?? data.position) ? `Position: <b>#${Number(data.display_position ?? data.position).toLocaleString()}</b>. ` : '') +
-          `We’ll email you when VetDIY opens in your area.<br/><span>Share: ${shareUrl.textContent}</span>`);
+        let saved = null; try{ saved = JSON.parse(localStorage.getItem('vetdiy_wl') || 'null'); }catch(_e){}
+        try{
+          localStorage.setItem('vetdiy_wl', JSON.stringify({
+            code: referralCode,
+            role: data.role || backendRole(),
+            localLabel: (saved && saved.localLabel) || currentLocationLabel(),
+            contractorOptIn: crossRolePro
+          }));
+        }catch(_e){}
+        showSuccess(successHtml({
+          displayPosition: data.display_position,
+          localDisplayPosition: data.local_display_position,
+          localDisplayCount: data.local_display_count,
+          points: data.points,
+          fieldPoints: data.field_points,
+          confirmed: true,
+          code: data.referral_code,
+          localLabel: (saved && saved.localLabel) || currentLocationLabel(),
+          preview: false
+        }));
         showInvite();
       }catch(_error){
         showSuccess('<b>That confirmation link is invalid or expired.</b>');
@@ -798,7 +925,12 @@
       const row = document.createElement('div');
       row.className = 'invite-row';
       const inp = document.createElement('input');
-      inp.type = 'email'; inp.placeholder = 'friend@email.com';
+      inp.type = 'email';
+      inp.name = 'friendEmail';
+      inp.placeholder = 'friend@email.com';
+      inp.autocomplete = 'email';
+      inp.spellcheck = false;
+      inp.setAttribute('aria-label', `Friend email ${inviteInputs().length + 1}`);
       row.appendChild(inp); inviteFields.appendChild(row);
       inp.addEventListener('input', () => {
         const all = inviteInputs();
@@ -863,9 +995,16 @@
         if(!s) return;
         referralCode = code;
         if(saved && saved.role) selectRole(saved.role === 'contractor' ? 'contractor' : 'customer');
+        crossRolePro = Boolean(saved && saved.contractorOptIn);
+        renderPoints();
         if(typeof s.display_count === 'number') setCount(s.display_count);
+        const localLabel = escapeHtml((saved && saved.localLabel) || 'Local');
+        const localPosition = Number(s.local_display_position) || null;
+        const localCount = Number(s.local_display_count) || null;
         resumeBanner.classList.remove('hidden');
-        resumeBanner.innerHTML = `<b>Welcome back — you're on the list.</b><br/>Position <span class="rp">#${Number(s.display_position || s.list_position || 0).toLocaleString()}</span> · <span class="rp">${Number(s.points || 0).toLocaleString()} pts</span>` +
+        resumeBanner.innerHTML = `<b>Welcome back — you're on the list.</b><br/>Global estimate <span class="rp">#${Number(s.display_position || 0).toLocaleString()}</span>` +
+          (localPosition ? ` · ${localLabel} <span class="rp">#${localPosition.toLocaleString()}${localCount ? ` of ${localCount.toLocaleString()}` : ''}</span>` : '') +
+          ` · <span class="rp">${Number(s.points || 0).toLocaleString()} pts</span>` +
           (s.confirmed ? '' : ' · <b>confirm your email for +200</b>');
         updateShareUrl();
         showInvite();
@@ -879,15 +1018,16 @@
       if(chip){
         revealStepTwo();
         const el = document.getElementById(chip.dataset.focus);
-        if(el){ el.scrollIntoView({ behavior:'smooth', block:'center' }); setTimeout(() => el.focus(), 320); }
+        if(el){ el.scrollIntoView({ behavior:REDUCED_MOTION ? 'auto' : 'smooth', block:'center' }); setTimeout(() => el.focus(), REDUCED_MOTION ? 0 : 320); }
         return;
       }
       if(e.target.closest('#addProBtn')){
         crossRolePro = true;
         revealStepTwo();
         contractorFields.classList.remove('hidden');
-        contractorFields.scrollIntoView({ behavior:'smooth', block:'center' });
-        setTimeout(() => { const b = document.getElementById('businessName'); if(b) b.focus(); }, 320);
+        renderPoints();
+        contractorFields.scrollIntoView({ behavior:REDUCED_MOTION ? 'auto' : 'smooth', block:'center' });
+        setTimeout(() => { const b = document.getElementById('businessName'); if(b) b.focus(); }, REDUCED_MOTION ? 0 : 320);
         return;
       }
       if(e.target.closest('#winShareBtn')){
@@ -923,12 +1063,12 @@
       const label = button.textContent;
       submitting = true;
       button.disabled = true;
-      button.textContent = 'Joining...';
+      button.textContent = 'Joining…';
       try{
         if(CONFIGURED) await submitReal();
         else submitPreview();
       }catch(error){
-        showSuccess(`<b>Something went wrong.</b><br/>${error.message || 'Please try again.'}`);
+        showSuccess(`<b>Something went wrong.</b><br/>${escapeHtml(error.message || 'Please try again.')}`);
       }finally{
         submitting = false;
         button.disabled = false;
