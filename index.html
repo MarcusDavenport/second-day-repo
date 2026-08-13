@@ -743,6 +743,19 @@
       ));
     }
 
+    // Our own referral code, if this browser has one — from the live session first, then the
+    // ?me= deep link, then localStorage. Returned to the backend as `self_code` to prove prior
+    // ownership of the entry behind an email address.
+    function storedSelfCode(){
+      if(referralCode) return referralCode;
+      const meParam = (params.get('me') || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 16);
+      if(meParam) return meParam;
+      try{
+        const saved = JSON.parse(localStorage.getItem('vetdiy_wl') || 'null');
+        return (saved && saved.code) || null;
+      }catch(_e){ return null; }
+    }
+
     function collectPayload(){
       const local = locationPayload();
       const payload = {
@@ -752,6 +765,11 @@
         city: local.city,
         zip: local.zip,
         ref: REF || null,
+        // Proof that we already hold this entry, so the backend will return our rank/points and
+        // accept profile edits. `ref` is the INBOUND referrer (who invited us); `self_code` is OUR
+        // OWN code. Knowing an email address is not proof of owning it — without this the endpoint
+        // would be an unauthenticated read+write oracle on anyone's record.
+        self_code: storedSelfCode(),
         source: crossRolePro ? 'waitlist-landing-pro-upsell' : 'waitlist-landing',
         utm: Object.keys(UTM).length ? UTM : null,
         hp: honeypot ? honeypot.value : ''
@@ -823,6 +841,23 @@
       const response = await fetch(FN + '/waitlist-submit', { method:'POST', headers:HEADERS, body:JSON.stringify(collectPayload()) });
       const data = await response.json().catch(() => ({}));
       if(!response.ok || data.error) throw new Error(data.error || ('HTTP ' + response.status));
+
+      // Uncredentialed re-submit: this address is already on the list and we did NOT prove we own
+      // the entry (no stored referral code to replay). The backend deliberately returns no rank,
+      // points, code or role in that case — knowing an email address is not proof of owning it —
+      // and it re-sends the confirmation mail to the ADDRESS OWNER instead. Show that truthfully
+      // rather than rendering an empty success card.
+      if(data.updated === true && !data.referral_code){
+        showSuccess(`<div class="win">
+          <div class="win-badge">You're already on the list 🎖️</div>
+          <div class="win-sub">We've sent a confirmation link to <b>${escapeHtml(email.value.trim())}</b>.
+            Open it on this device and your spot, points and invite link come right back.</div>
+          <p class="fine">Signed up on another device or cleared your browser? The link in that email
+            is what restores your place — we can't show someone's position from just an email address.</p>
+        </div>`);
+        return;
+      }
+
       if(typeof data.display_count === 'number') setCount(data.display_count);
       referralCode = data.referral_code || referralCode;
       if(data.role) selectRole(data.role === 'contractor' ? 'contractor' : 'customer');
