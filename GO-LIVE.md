@@ -1,8 +1,25 @@
 # VetDIY Waitlist — Go-Live runbook
 
-The landing page is **live on GitHub Pages** and runs in **preview mode** (animated counter + optimistic
-success, nothing persisted) until you connect Supabase. Flipping it live is a ~15-minute, free, no-credit-card
-process.
+> ## ⚠️ HISTORICAL — THIS GO-LIVE IS COMPLETE. DO NOT RUN THESE COMMANDS.
+>
+> This document describes a go-live that **finished on 2026-07-03**. It is kept for provenance
+> only. The landing page is **not** in preview mode — it is live and wired to Supabase project
+> `njdzwcoognjmzibihewl`, and the waitlist backend was **hardened on 2026-07-23**.
+>
+> **Running the commands below would damage production**, because they:
+> - deploy from branch `feat/waitlist-backend`, which is frozen at 2026-07-12 and **predates the
+>   hardening** — it would strip `escapeHtml()` from outbound email and the per-IP `rateLimit()`
+>   from the public signup endpoint;
+> - run a bare `supabase db push` against the live project, which the marketplace repo's own
+>   runbook names as its rule #1 never to run;
+> - omit `--no-verify-jwt`, flipping the functions to `verify_jwt=true` and breaking every raw
+>   email link (confirm / unsubscribe) plus the landing page's publishable-key auth;
+> - reset `WAITLIST_SITE_URL` to the old GitHub Pages URL, repointing every confirm, share and
+>   unsubscribe link in live email away from `vetdiy.com`.
+>
+> **The authoritative source and the only sanctioned deploy procedure** live in the marketplace
+> repo: `docs/WAITLIST-DEPLOY-RUNBOOK.md`, deploying from
+> `All Code Projects/VetDIY/supabase/functions/waitlist-*`.
 
 Backend code lives in the marketplace repo on branch **`feat/waitlist-backend`**:
 - `supabase/migrations/0025_waitlist.sql` (additive — waitlist tables + counter + RLS)
